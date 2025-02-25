@@ -9,7 +9,7 @@
  *   0.2  : Working prototype
  *
  *------------------------------------------------------------------------- */
-#define progVersion "0.2"              // Program version definition
+#define progVersion "0.2"              // Program version definition 
 /* ------------------------------------------------------------------------- *
  *             GNU LICENSE CONDITIONS
  * ------------------------------------------------------------------------- *

@@ -7,9 +7,10 @@
  * Versions:
  *   0.1  : Initial code base
  *   0.2  : Working prototype
+ *   0.3  : Corrected little errors
  *
  *------------------------------------------------------------------------- */
-#define progVersion "0.2"              // Program version definition 
+#define progVersion "0.3"              // Program version definition 
 /* ------------------------------------------------------------------------- *
  *             GNU LICENSE CONDITIONS
  * ------------------------------------------------------------------------- *
@@ -94,7 +95,7 @@ LiquidCrystal_I2C display1(0x26, 20, 4);    // Initialize display1 object
  *                                  Constants and variables for measurements
  * ------------------------------------------------------------------------- */
 float sensorDistance  = 200;                 // Distance in mm
-float scaleFactor     = 0;                   // Scale Factor, default N-scale
+float scaleFactor     = 160;                 // Scale Factor, default N-scale
 float realDistance    = sensorDistance       // Real Distance in meters
                         * scaleFactor  
                         / 1000;
@@ -107,21 +108,22 @@ float realSpeed       = 0;
  * ------------------------------------------------------------------------- */
 unsigned long leftMillis  = 0;
 unsigned long rightMillis = 0;
-int foundLeft  = 0;
-int foundRight = 0;
 
 
 /* ------------------------------------------------------------------------- *
- *                                                           Array of scales
+ *                                            Array of NMRA scales and names
  * ------------------------------------------------------------------------- */
 float scales[8] = {45.2, 48, 64, 76, 87, 120, 160, 220};
+char  scaleName[8][12] = {"O(17)",
+                          "O, On3, On2", 
+                          "Sn3, S", 
+                          "OO", 
+                          "HO", 
+                          "TT", 
+                          "N, Nn3", 
+                          "Z"
+                         };
 int   scalePtr = 6;
-
-
-/* ------------------------------------------------------------------------- *
- *                                       Buffers to build values for display
- * ------------------------------------------------------------------------- */
-char strBuf1[20];                           // stringbuffer
 
 
 
@@ -160,15 +162,16 @@ void initSystem() {
                         // Initial text on display
   LCD_display(display1, 0, 0, F("GAW_Speedometer v   "));
   LCD_display(display1, 0,17, String(progVersion));
-  LCD_display(display1, 3, 0, "Scale 1:");
-  LCD_display(display1, 3, 8, String(scaleFactor,1));
 
+  LCD_display(display1, 3, 0, "Scale: ");
+  LCD_display(display1, 3, 7, scaleName[scalePtr]);
+
+debugln("Clearing Detection");
   digitalWrite(leftDetection, LOW);
   digitalWrite(rightDetection, LOW);
 
   realDistance = sensorDistance * scaleFactor / 1000.0;
 
-  foundLeft = foundRight = 0;
   STATE = NIL;
 
 }
@@ -189,14 +192,16 @@ void loop() {
     case detectedLeft:
       leftMillis = millis();
       digitalWrite(leftDetection, HIGH);
-debug("Left - ");
+debug("detectedLeft - ");
+      delayFor(500);
       STATE = waitForRight;
       break;
       
     case detectedRight:
       rightMillis = millis();
       digitalWrite(rightDetection, HIGH);
-debug("Right - ");
+debug("detectedRight - ");
+      delayFor(500);
       STATE = waitForLeft;
       break;
 
@@ -204,11 +209,11 @@ debug("Right - ");
       if ( !digitalRead(rightSensor) ) {
         detectionTime = millis() - leftMillis;
         digitalWrite(rightDetection, HIGH);
-        showSpeed();
-debug("Right - ");
+debug("waitForRight - ");
 debug("Time: ");
 debug(String(detectionTime));
-        delay(1000);
+        showSpeed();
+        delayFor(500);
         STATE = initialize;
       };
       break;
@@ -217,11 +222,11 @@ debug(String(detectionTime));
       if ( !digitalRead(leftSensor) ) {
         detectionTime = millis() - rightMillis;
         digitalWrite(leftDetection, HIGH);
-        showSpeed();
-debug("Left - ");
+debug("waitForLeft - ");
 debug("Time: ");
 debug(String(detectionTime));
-        delay(1000);
+        showSpeed();
+        delayFor(500);
         STATE = initialize;
       };
       break;
@@ -240,25 +245,37 @@ debug(String(detectionTime));
       
   }
 
-  detect();
+  detect();                                 // Read sensors / pins
 
 }
 
 
 
 /* ------------------------------------------------------------------------- *
- *       Read inputs                                                detect()
+ *       Delay operations for ms milliseconds                     delayFor()
+ * ------------------------------------------------------------------------- */
+void delayFor(unsigned long ms) {
+  unsigned long start = millis();
+  do {
+    // Nothing
+  } while ( millis() < start + ms );
+}
+
+
+
+/* ------------------------------------------------------------------------- *
+ *       Read inputs and set next state accordingly                 detect()
  * ------------------------------------------------------------------------- */
 void detect() {
 
   if (analogRead(leftSensor) <250) {
-    if ( STATE != waitForLeft ) {
+    if ( STATE != waitForRight ) {
       STATE = detectedLeft;
     }
   }
 
   if (analogRead(rightSensor) <250) {
-    if ( STATE != waitForRight ) {
+    if ( STATE != waitForLeft ) {
       STATE = detectedRight;
     }
   }
@@ -279,7 +296,7 @@ void detect() {
  *       Choose and store scale                                chooseScale()
  * ------------------------------------------------------------------------- */
 void chooseScale() {
-unsigned long scaleMillis;
+  unsigned long scaleMillis;
 
   LCD_display(display1, 1,0, "                    ");
   LCD_display(display1, 2,0, "                    ");
@@ -292,10 +309,10 @@ unsigned long scaleMillis;
       (scalePtr < 7)? scalePtr++ : scalePtr = 0;
       scaleFactor = scales[scalePtr];
     }
-    LCD_display(display1, 3, 0, "Scale 1:");
-    LCD_display(display1, 3, 8, String(scaleFactor,1));
+    LCD_display(display1, 3, 0, "Scale: ");
+    LCD_display(display1, 3, 7, scaleName[scalePtr]);
 
-  } while (scaleMillis < 1000);
+  } while (scaleMillis < 1000);             // give max one second to change
 }
 
 
@@ -309,8 +326,7 @@ void showSpeed() {
   LCD_display(display1, 2, 7, String(realSpeed) );
 
 debug(" - Speed: ");
-debug(String(realSpeed));
-debugln();
+debugln(String(realSpeed));
 
 }
 

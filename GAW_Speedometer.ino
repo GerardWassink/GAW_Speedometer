@@ -328,6 +328,7 @@ void showSpeed() {
 
   LCD_display(display1, 0, 0, F("Speed:          "));
   LCD_display(display1, 0, 7, String(realSpeed) );
+  LCD_display(display1, 0,13, F("Kmh"));
 
 debug(" - Speed: ");
 debugln(String(realSpeed));

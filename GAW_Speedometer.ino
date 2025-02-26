@@ -8,9 +8,10 @@
  *   0.1  : Initial code base
  *   0.2  : Working prototype
  *   0.3  : Corrected little errors
+ *   0.4  : Switched back to 16x04 LCD
  *
  *------------------------------------------------------------------------- */
-#define progVersion "0.3"              // Program version definition 
+#define progVersion "0.4"              // Program version definition 
 /* ------------------------------------------------------------------------- *
  *             GNU LICENSE CONDITIONS
  * ------------------------------------------------------------------------- *
@@ -74,21 +75,21 @@
 /* ------------------------------------------------------------------------- *
  *                                                        Defines for states
  * ------------------------------------------------------------------------- */
-#define initialize       0                  // Init system
-#define detectedRight    1                  // Right sensor detected
-#define detectedLeft     2                  // Left sensor detected
-#define waitForRight     3                  // Wait for Right after Left
-#define waitForLeft      4                  // Wait for Left after Right
-#define setScale         5                  // Choose and set scale
-#define reset            6                  // Reset button detected
-#define NIL             99                  // Do nothing
+#define initialize        0                 // Init system
+#define detectedRight     1                 // Right sensor detected
+#define detectedLeft      2                 // Left sensor detected
+#define waitForRight      3                 // Wait for Right after Left
+#define waitForLeft       4                 // Wait for Left after Right
+#define setScale          5                 // Choose and set scale
+#define reset             6                 // Reset button detected
+#define NIL              99                 // Do nothing
 
 int STATE;
 
 /* ------------------------------------------------------------------------- *
  *                                          Create object for the LCD screen
  * ------------------------------------------------------------------------- */
-LiquidCrystal_I2C display1(0x26, 20, 4);    // Initialize display1 object
+LiquidCrystal_I2C display1(0x27, 16, 4);    // Initialize display1 object
 
 
 /* ------------------------------------------------------------------------- *
@@ -151,6 +152,17 @@ void setup() {
 
   STATE = initialize;
 
+                        // Initial text on display
+  LCD_display(display1, 0, 0, F("GAW_Speedometer "));
+  LCD_display(display1, 1, 0, F("  Version       "));
+  LCD_display(display1, 1,10, String(progVersion));
+
+  delayFor(3000);
+
+  LCD_display(display1, 0, 0, F("Speed:          "));
+  LCD_display(display1, 1, 0, F("Scale:           ") );
+  LCD_display(display1, 1, 7, scaleName[scalePtr]);
+
 }
 
 
@@ -159,12 +171,6 @@ void setup() {
  *       Initlialize system at reset                            initSystem()
  * ------------------------------------------------------------------------- */
 void initSystem() {
-                        // Initial text on display
-  LCD_display(display1, 0, 0, F("GAW_Speedometer v   "));
-  LCD_display(display1, 0,17, String(progVersion));
-
-  LCD_display(display1, 3, 0, "Scale: ");
-  LCD_display(display1, 3, 7, scaleName[scalePtr]);
 
 debugln("Clearing Detection");
   digitalWrite(leftDetection, LOW);
@@ -298,10 +304,6 @@ void detect() {
 void chooseScale() {
   unsigned long scaleMillis;
 
-  LCD_display(display1, 1,0, "                    ");
-  LCD_display(display1, 2,0, "                    ");
-  LCD_display(display1, 3,0, "                    ");
-
   do {
     scaleMillis = millis();
 
@@ -309,8 +311,10 @@ void chooseScale() {
       (scalePtr < 7)? scalePtr++ : scalePtr = 0;
       scaleFactor = scales[scalePtr];
     }
-    LCD_display(display1, 3, 0, "Scale: ");
-    LCD_display(display1, 3, 7, scaleName[scalePtr]);
+    LCD_display(display1, 1, 0, F("Scale:          ") );
+    LCD_display(display1, 1, 7, scaleName[scalePtr]);
+
+    delayFor(250);
 
   } while (scaleMillis < 1000);             // give max one second to change
 }
@@ -322,8 +326,8 @@ void chooseScale() {
 void showSpeed() {
   realSpeed = (realDistance * 3.6) / (detectionTime / 1000.0);
 
-  LCD_display(display1, 2, 0, F("Speed:              "));
-  LCD_display(display1, 2, 7, String(realSpeed) );
+  LCD_display(display1, 0, 0, F("Speed:          "));
+  LCD_display(display1, 0, 7, String(realSpeed) );
 
 debug(" - Speed: ");
 debugln(String(realSpeed));

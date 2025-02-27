@@ -9,9 +9,10 @@
  *   0.2  : Working prototype
  *   0.3  : Corrected little errors
  *   0.4  : Switched back to 16x04 LCD
+ *   0.5  : Code- and timing improvements
  *
  *------------------------------------------------------------------------- */
-#define progVersion "0.4"              // Program version definition 
+#define progVersion "0.5"              // Program version definition 
 /* ------------------------------------------------------------------------- *
  *             GNU LICENSE CONDITIONS
  * ------------------------------------------------------------------------- *
@@ -75,6 +76,11 @@
 /* ------------------------------------------------------------------------- *
  *                                                        Defines for states
  * ------------------------------------------------------------------------- */
+#define detectWait       500                // time to wait after detection
+
+/* ------------------------------------------------------------------------- *
+ *                                                        Defines for states
+ * ------------------------------------------------------------------------- */
 #define initialize        0                 // Init system
 #define detectedRight     1                 // Right sensor detected
 #define detectedLeft      2                 // Left sensor detected
@@ -86,6 +92,7 @@
 
 int STATE;
 
+
 /* ------------------------------------------------------------------------- *
  *                                          Create object for the LCD screen
  * ------------------------------------------------------------------------- */
@@ -95,17 +102,17 @@ LiquidCrystal_I2C display1(0x27, 16, 4);    // Initialize display1 object
 /* ------------------------------------------------------------------------- *
  *                                  Constants and variables for measurements
  * ------------------------------------------------------------------------- */
-float sensorDistance  = 200;                 // Distance in mm
-float scaleFactor     = 160;                 // Scale Factor, default N-scale
+float sensorDistance  = 200.0;               // Distance in mm
+float scaleFactor     = 0.0;                 // Scale Factor, default N-scale
 float realDistance    = sensorDistance       // Real Distance in meters
                         * scaleFactor  
                         / 1000;
-long  detectionTime   = 0;
-float realSpeed       = 0;
+long  detectionTime   = 0;                   // Time between detections
+float realSpeed       = 0.0;
 
 
 /* ------------------------------------------------------------------------- *
- *                                           Variables controlling detection
+ *                                                Variables timing detection
  * ------------------------------------------------------------------------- */
 unsigned long leftMillis  = 0;
 unsigned long rightMillis = 0;
@@ -114,7 +121,15 @@ unsigned long rightMillis = 0;
 /* ------------------------------------------------------------------------- *
  *                                            Array of NMRA scales and names
  * ------------------------------------------------------------------------- */
-float scales[8] = {45.2, 48, 64, 76, 87, 120, 160, 220};
+float scales[8]        = {45.2, 
+                          48.0, 
+                          64.0, 
+                          76.0, 
+                          87.0, 
+                          120.0, 
+                          160.0, 
+                          220.0
+                         };
 char  scaleName[8][12] = {"O(17)",
                           "O, On3, On2", 
                           "Sn3, S", 
@@ -172,7 +187,6 @@ void setup() {
  * ------------------------------------------------------------------------- */
 void initSystem() {
 
-debugln("Clearing Detection");
   digitalWrite(leftDetection, LOW);
   digitalWrite(rightDetection, LOW);
 
@@ -192,6 +206,7 @@ void loop() {
   switch (STATE) {
 
     case initialize:
+debug("Initializing - ");
       initSystem();
       break;
 
@@ -199,40 +214,42 @@ void loop() {
       leftMillis = millis();
       digitalWrite(leftDetection, HIGH);
 debug("detectedLeft - ");
-      delayFor(500);
+      delayFor(detectWait);
       STATE = waitForRight;
+debug("waitForRight - ");
       break;
       
     case detectedRight:
       rightMillis = millis();
       digitalWrite(rightDetection, HIGH);
 debug("detectedRight - ");
-      delayFor(500);
+      delayFor(detectWait);
       STATE = waitForLeft;
+debug("waitForLeft - ");
       break;
 
     case waitForRight:
-      if ( !digitalRead(rightSensor) ) {
-        detectionTime = millis() - leftMillis;
+      if ( analogRead(rightSensor) <250 ) {
+debug("endWaitForRight - ");
         digitalWrite(rightDetection, HIGH);
-debug("waitForRight - ");
+        detectionTime = millis() - leftMillis;
 debug("Time: ");
 debug(String(detectionTime));
         showSpeed();
-        delayFor(500);
+        delayFor(detectWait);
         STATE = initialize;
       };
       break;
       
     case waitForLeft:
-      if ( !digitalRead(leftSensor) ) {
-        detectionTime = millis() - rightMillis;
+      if ( analogRead(leftSensor) <250 ) {
+debug("endWaitForLeft - ");
         digitalWrite(leftDetection, HIGH);
-debug("waitForLeft - ");
+        detectionTime = millis() - rightMillis;
 debug("Time: ");
 debug(String(detectionTime));
         showSpeed();
-        delayFor(500);
+        delayFor(detectWait);
         STATE = initialize;
       };
       break;
@@ -243,8 +260,12 @@ debug(String(detectionTime));
       break;
       
     case reset:
+debug("Resetting - ");
       STATE = initialize;
+      delayFor(250);
       break;
+
+debugln();
 
     default:
       break;
@@ -258,31 +279,21 @@ debug(String(detectionTime));
 
 
 /* ------------------------------------------------------------------------- *
- *       Delay operations for ms milliseconds                     delayFor()
- * ------------------------------------------------------------------------- */
-void delayFor(unsigned long ms) {
-  unsigned long start = millis();
-  do {
-    // Nothing
-  } while ( millis() < start + ms );
-}
-
-
-
-/* ------------------------------------------------------------------------- *
  *       Read inputs and set next state accordingly                 detect()
  * ------------------------------------------------------------------------- */
 void detect() {
 
-  if (analogRead(leftSensor) <250) {
+  if (analogRead(leftSensor) < 200) {
     if ( STATE != waitForRight ) {
       STATE = detectedLeft;
+debug("STATEdetectedLeft - ");
     }
   }
 
-  if (analogRead(rightSensor) <250) {
+  if (analogRead(rightSensor) < 200) {
     if ( STATE != waitForLeft ) {
       STATE = detectedRight;
+debug("STATEdetectedRight - ");
     }
   }
 
@@ -294,6 +305,18 @@ void detect() {
     STATE = setScale;
   }
 
+}
+
+
+
+/* ------------------------------------------------------------------------- *
+ *       Delay operations for ms milliseconds                     delayFor()
+ * ------------------------------------------------------------------------- */
+void delayFor(unsigned long ms) {
+  unsigned long start = millis();
+  do {
+    // Nothing
+  } while ( millis() < start + ms );
 }
 
 

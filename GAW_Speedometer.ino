@@ -77,6 +77,7 @@
  *                                                        Defines for states
  * ------------------------------------------------------------------------- */
 #define detectWait       500                // time to wait after detection
+#define detectWaitLong   2000               // long wait after detection
 
 /* ------------------------------------------------------------------------- *
  *                                                        Defines for states
@@ -236,7 +237,7 @@ debug("endWaitForRight - ");
 debug("Time: ");
 debug(String(detectionTime));
         showSpeed();
-        delayFor(detectWait);
+        delayFor(detectWaitLong);
         STATE = initialize;
       };
       break;
@@ -249,7 +250,7 @@ debug("endWaitForLeft - ");
 debug("Time: ");
 debug(String(detectionTime));
         showSpeed();
-        delayFor(detectWait);
+        delayFor(detectWaitLong);
         STATE = initialize;
       };
       break;

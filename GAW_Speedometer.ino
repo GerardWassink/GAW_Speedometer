@@ -10,9 +10,11 @@
  *   0.3  : Corrected little errors
  *   0.4  : Switched back to 16x04 LCD
  *   0.5  : Code- and timing improvements
+ *   0.6  : Built in Measurement button & LED
+ *          Restructured code, removed STATE machine
  *
  *------------------------------------------------------------------------- */
-#define progVersion "0.5"              // Program version definition 
+#define progVersion "0.6"                   // Program version definition 
 /* ------------------------------------------------------------------------- *
  *             GNU LICENSE CONDITIONS
  * ------------------------------------------------------------------------- *
@@ -40,7 +42,7 @@
  * Compiler directives to switch debugging on / off
  * Do not enable DEBUG when not needed, Serial coms takes space and time!
  * ------------------------------------------------------------------------- */
-#define DEBUG 0
+#define DEBUG 1
 
 #if DEBUG == 1
   #define debugstart(x) Serial.begin(x)
@@ -69,30 +71,16 @@
 #define resetButton      PD2                // Reset the detection system
 #define scaleSelection   PD3                // Button to browse/seletc scale
 
-#define leftDetection    PD4                // LED indicating left detection
-#define rightDetection   PD5                // LED indicating rightt detection
+#define leftDetection    PD4                // LED left detection
+#define rightDetection   PD5                // LED right detection
+#define measurement      PD6                // LED measurement active
 
-
-/* ------------------------------------------------------------------------- *
- *                                                        Defines for states
- * ------------------------------------------------------------------------- */
-#define detectWait       500                // time to wait after detection
-#define detectWaitLong   2000               // long wait after detection
+#define doMeasurement    PD7                // Button to start measurement
 
 /* ------------------------------------------------------------------------- *
  *                                                        Defines for states
  * ------------------------------------------------------------------------- */
-#define initialize        0                 // Init system
-#define detectedRight     1                 // Right sensor detected
-#define detectedLeft      2                 // Left sensor detected
-#define waitForRight      3                 // Wait for Right after Left
-#define waitForLeft       4                 // Wait for Left after Right
-#define setScale          5                 // Choose and set scale
-#define reset             6                 // Reset button detected
-#define NIL              99                 // Do nothing
-
-int STATE;
-
+#define debounceWait     500                // time to wait after detection
 
 /* ------------------------------------------------------------------------- *
  *                                          Create object for the LCD screen
@@ -160,13 +148,13 @@ void setup() {
 
   pinMode(leftDetection, OUTPUT);
   pinMode(rightDetection, OUTPUT);
+  pinMode(measurement, OUTPUT);
 
   pinMode(resetButton, INPUT_PULLUP);
   pinMode(scaleSelection, INPUT_PULLUP);
+  pinMode(doMeasurement, INPUT_PULLUP);
 
   scaleFactor = scales[scalePtr];
-
-  STATE = initialize;
 
                         // Initial text on display
   LCD_display(display1, 0, 0, F("GAW_Speedometer "));
@@ -179,6 +167,8 @@ void setup() {
   LCD_display(display1, 1, 0, F("Scale:           ") );
   LCD_display(display1, 1, 7, scaleName[scalePtr]);
 
+  realDistance = sensorDistance * scaleFactor / 1000.0;
+
 }
 
 
@@ -188,123 +178,130 @@ void setup() {
  * ------------------------------------------------------------------------- */
 void initSystem() {
 
-  digitalWrite(leftDetection, LOW);
+  digitalWrite(leftDetection,  LOW);
   digitalWrite(rightDetection, LOW);
-
-  realDistance = sensorDistance * scaleFactor / 1000.0;
-
-  STATE = NIL;
+  digitalWrite(measurement,    LOW);
 
 }
 
 
 
 /* ------------------------------------------------------------------------- *
- *       Repeating loop, state machine                                loop()
+ *       Repeating loop                                               loop()
  * ------------------------------------------------------------------------- */
 void loop() {
 
-  switch (STATE) {
-
-    case initialize:
-debug("Initializing - ");
-      initSystem();
-      break;
-
-    case detectedLeft:
-      leftMillis = millis();
-      digitalWrite(leftDetection, HIGH);
-debug("detectedLeft - ");
-      delayFor(detectWait);
-      STATE = waitForRight;
-debug("waitForRight - ");
-      break;
-      
-    case detectedRight:
-      rightMillis = millis();
-      digitalWrite(rightDetection, HIGH);
-debug("detectedRight - ");
-      delayFor(detectWait);
-      STATE = waitForLeft;
-debug("waitForLeft - ");
-      break;
-
-    case waitForRight:
-      if ( analogRead(rightSensor) <250 ) {
-debug("endWaitForRight - ");
-        digitalWrite(rightDetection, HIGH);
-        detectionTime = millis() - leftMillis;
-debug("Time: ");
-debug(String(detectionTime));
-        showSpeed();
-        delayFor(detectWaitLong);
-        STATE = initialize;
-      };
-      break;
-      
-    case waitForLeft:
-      if ( analogRead(leftSensor) <250 ) {
-debug("endWaitForLeft - ");
-        digitalWrite(leftDetection, HIGH);
-        detectionTime = millis() - rightMillis;
-debug("Time: ");
-debug(String(detectionTime));
-        showSpeed();
-        delayFor(detectWaitLong);
-        STATE = initialize;
-      };
-      break;
-      
-    case setScale:
-      chooseScale();
-      STATE = initialize;
-      break;
-      
-    case reset:
-debug("Resetting - ");
-      STATE = initialize;
-      delayFor(250);
-      break;
-
-debugln();
-
-    default:
-      break;
-      
+  if ( !digitalRead(doMeasurement) ) {
+debug("Measurement starts - ");
+    delayFor(debounceWait);
+    digitalWrite( measurement, HIGH );
+    measure();
   }
 
-  detect();                                 // Read sensors / pins
+  if ( !digitalRead(resetButton) ) {
+debugln("Resetting");
+    delayFor(debounceWait);
+    initSystem();
+  }
+
+  if ( !digitalRead(scaleSelection) ) {
+debugln("Select Scale");
+    chooseScale();
+  }
 
 }
 
 
 
 /* ------------------------------------------------------------------------- *
- *       Read inputs and set next state accordingly                 detect()
+ *       Do measurment                                         measurement()
  * ------------------------------------------------------------------------- */
-void detect() {
+void measure() {
+
+  do {
+  } while ( (analogRead(leftSensor)  > 200) && 
+            (analogRead(rightSensor) > 200)
+          );
 
   if (analogRead(leftSensor) < 200) {
-    if ( STATE != waitForRight ) {
-      STATE = detectedLeft;
-debug("STATEdetectedLeft - ");
-    }
-  }
-
+    leftToRight();
+  } else 
   if (analogRead(rightSensor) < 200) {
-    if ( STATE != waitForLeft ) {
-      STATE = detectedRight;
-debug("STATEdetectedRight - ");
-    }
+    rightToLeft();
   }
 
-  if ( !digitalRead(resetButton) ) {
-    STATE = reset;
-  }
+  initSystem();
 
-  if ( !digitalRead(scaleSelection) ) {
-    STATE = setScale;
-  }
+}
+
+
+
+/* ------------------------------------------------------------------------- *
+ *       Measure leftToRight                                   leftToRight()
+ * ------------------------------------------------------------------------- */
+void leftToRight() {
+
+  int rValue = 999;
+
+  leftMillis = millis();
+  debug("detectedLeft, waitForRight - ");
+  digitalWrite(leftDetection, HIGH);
+//  delayFor(debounceWait);
+
+  do {
+    rValue = analogRead(rightSensor);
+  } while ( rValue > 200 );
+
+  detectionTime = millis() - leftMillis;
+  digitalWrite(rightDetection, HIGH);
+
+  showSpeed();
+
+}
+
+
+
+/* ------------------------------------------------------------------------- *
+ *       Measure rightToLeft                                   RightToleft()
+ * ------------------------------------------------------------------------- */
+void rightToLeft() {
+
+  int lValue = 999;
+
+  rightMillis = millis();
+  debug("detectedRight, waitForLeft - ");
+  digitalWrite(rightDetection, HIGH);
+//  delayFor(debounceWait);
+
+  do {
+    lValue = analogRead(leftSensor);
+  } while ( lValue > 200 );
+
+  detectionTime = millis() - rightMillis;
+  digitalWrite(leftDetection, HIGH);
+
+  showSpeed();
+
+}
+
+
+
+/* ------------------------------------------------------------------------- *
+ *       Calculate and show RealSpeed                       calculateSpeed()
+ * ------------------------------------------------------------------------- */
+void showSpeed() {
+
+debug("Time: ");
+debug(String(detectionTime));
+
+  realSpeed = (realDistance * 3.6) / (detectionTime / 1000.0);
+
+  LCD_display(display1, 0, 0, F("Speed:          "));
+  LCD_display(display1, 0, 7, String(realSpeed) );
+  LCD_display(display1, 0,13, F("Kmh"));
+
+debug(" - Speed: ");
+debugln(String(realSpeed));
 
 }
 
@@ -328,37 +325,25 @@ void delayFor(unsigned long ms) {
 void chooseScale() {
   unsigned long scaleMillis;
 
+  scaleMillis = millis();
+
   do {
-    scaleMillis = millis();
 
     if ( !digitalRead(scaleSelection) ) {
       (scalePtr < 7)? scalePtr++ : scalePtr = 0;
       scaleFactor = scales[scalePtr];
     }
+
     LCD_display(display1, 1, 0, F("Scale:          ") );
     LCD_display(display1, 1, 7, scaleName[scalePtr]);
 
     delayFor(250);
 
-  } while (scaleMillis < 1000);             // give max one second to change
-}
+  } while ( (millis() - scaleMillis) < 250);             // give max one second to change
 
-
-/* ------------------------------------------------------------------------- *
- *       Calculate and show RealSpeed                       calculateSpeed()
- * ------------------------------------------------------------------------- */
-void showSpeed() {
-  realSpeed = (realDistance * 3.6) / (detectionTime / 1000.0);
-
-  LCD_display(display1, 0, 0, F("Speed:          "));
-  LCD_display(display1, 0, 7, String(realSpeed) );
-  LCD_display(display1, 0,13, F("Kmh"));
-
-debug(" - Speed: ");
-debugln(String(realSpeed));
+  realDistance = sensorDistance * scaleFactor / 1000.0;
 
 }
-
 
 
 /* ------------------------------------------------------------------------- *

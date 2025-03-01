@@ -12,9 +12,11 @@
  *   0.5  : Code- and timing improvements
  *   0.6  : Built in Measurement button & LED
  *          Restructured code, removed STATE machine
+ *            resulting in more reliable measurements
+ *   0.7  : Replaced soft reset with hard reset
  *
  *------------------------------------------------------------------------- */
-#define progVersion "0.6"                   // Program version definition 
+#define progVersion "0.7"                   // Program version definition 
 /* ------------------------------------------------------------------------- *
  *             GNU LICENSE CONDITIONS
  * ------------------------------------------------------------------------- *
@@ -68,14 +70,13 @@
 #define leftSensor       A2                 // Input pins
 #define rightSensor      A3                 //   from IR detectors
 
-#define resetButton      PD2                // Reset the detection system
-#define scaleSelection   PD3                // Button to browse/seletc scale
+#define scaleSelection   PD2                // Button to browse/seletc scale
 
-#define leftDetection    PD4                // LED left detection
-#define rightDetection   PD5                // LED right detection
-#define measurement      PD6                // LED measurement active
+#define leftDetection    PD3                // LED left detection
+#define rightDetection   PD4                // LED right detection
+#define measurement      PD5                // LED measurement active
 
-#define doMeasurement    PD7                // Button to start measurement
+#define doMeasurement    PD6                // Button to start measurement
 
 /* ------------------------------------------------------------------------- *
  *                                                        Defines for states
@@ -150,7 +151,6 @@ void setup() {
   pinMode(rightDetection, OUTPUT);
   pinMode(measurement, OUTPUT);
 
-  pinMode(resetButton, INPUT_PULLUP);
   pinMode(scaleSelection, INPUT_PULLUP);
   pinMode(doMeasurement, INPUT_PULLUP);
 
@@ -193,15 +193,8 @@ void loop() {
 
   if ( !digitalRead(doMeasurement) ) {
 debug("Measurement starts - ");
-    delayFor(debounceWait);
     digitalWrite( measurement, HIGH );
     measure();
-  }
-
-  if ( !digitalRead(resetButton) ) {
-debugln("Resetting");
-    delayFor(debounceWait);
-    initSystem();
   }
 
   if ( !digitalRead(scaleSelection) ) {

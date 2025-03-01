@@ -15,9 +15,10 @@
  *            resulting in more reliable measurements
  *   0.7  : Replaced soft reset with hard reset
  *   0.8  : Improved README, schematic added
+ *   0.9  : Built in pause after showing speed
  *
  *------------------------------------------------------------------------- */
-#define progVersion "0.8"                   // Program version definition 
+#define progVersion "0.9"                   // Program version definition 
 /* ------------------------------------------------------------------------- *
  *             GNU LICENSE CONDITIONS
  * ------------------------------------------------------------------------- *
@@ -296,6 +297,8 @@ debug(String(detectionTime));
 
 debug(" - Speed: ");
 debugln(String(realSpeed));
+
+  delayFor(500);
 
 }
 

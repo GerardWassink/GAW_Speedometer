@@ -14,9 +14,10 @@
  *          Restructured code, removed STATE machine
  *            resulting in more reliable measurements
  *   0.7  : Replaced soft reset with hard reset
+ *   0.8  : Improved README, schematic added
  *
  *------------------------------------------------------------------------- */
-#define progVersion "0.7"                   // Program version definition 
+#define progVersion "0.8"                   // Program version definition 
 /* ------------------------------------------------------------------------- *
  *             GNU LICENSE CONDITIONS
  * ------------------------------------------------------------------------- *

@@ -132,7 +132,8 @@ char  scaleName[8][12] = {"O(17)",
                           "N, Nn3", 
                           "Z"
                          };
-int   scalePtr = 6;
+                         
+int   scalePtr = 6;                         // set default here
 
 
 

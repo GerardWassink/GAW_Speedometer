@@ -14,10 +14,17 @@ This default scale for the measurements can be altered to in total 8 NMRA scales
 The following functions are available.
 
 ### Start Measurement
-The start button switches to measurement mode. The measure LED will be switched on to indicate the measurement mode is on. The device now waits for either the left or the right sensor. When either is activated it will wait for activation of the other one, measuring the time it takes. As soon as the scond sensor is activated the scale-speed is calculated and displayed.
+Measurement starts when one of the IR sensors is activated by a passing train.
+The appropriate (left or right) LED will be switched on to indicate the start of the measurement.
+The device now waits for the other sensor. 
+It now measures the time it took. 
+As soon as the scond sensor is activated the scale-speed is calculated and displayed.
 
 ### Set Scale
-When the device is switched on, the default scale is presented. The Scale button, when pressed, switches to the next scale in the scale table. 
+When the device is switched on the default scale is presented. 
+As long as no measurement is taking place one can use the scale button, 
+to switch to the next scale in the scale table.
+
 
 Available scales (from NMRA) are:
 
@@ -35,7 +42,8 @@ Available scales (from NMRA) are:
 In the program, the default scale is designated by the value of ***scalePtr***, it's initial value is 6 for N-scale.
 
 ### Reset
-The Reset button perform a hard reset of the Arduino, creating a situation resembling a power off / power on.
+The Reset button performs a hard reset of the Arduino, 
+creating a situation resembling a power off / power on.
 
 ## Schematic
 A [schematic](./schematic/GAW_Speedometer_schematic.png) is available to make your own.

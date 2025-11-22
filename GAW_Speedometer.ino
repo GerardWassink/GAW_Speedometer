@@ -1,14 +1,14 @@
 /* ------------------------------------------------------------------------- *
  * Name   : GAW-Speedometer
  * Author : Gerard Wassink
- * Date   : February 2025
+ * Date   : November 2025
  * Purpose: Measure model train speed depending on scale
  *            using Infrared detectors
  * Versions:
  *   0.1  : Initial code base
  *   0.2  : Working prototype
  *   0.3  : Corrected little errors
- *   0.4  : Switched back to 16x04 LCD
+ *   0.4  : Switched back to 16x02 LCD
  *   0.5  : Code- and timing improvements
  *   0.6  : Built in Measurement button & LED
  *          Restructured code, removed STATE machine
@@ -17,9 +17,11 @@
  *   0.8  : Improved README, schematic added
  *   0.9  : Built in pause after showing speed
  *   1.0  : First Release
+ *   1.1  : Code change, automatic measurement start
+ *            for that purpose: re-instated state-machine
  *
  *------------------------------------------------------------------------- */
-#define progVersion "1.0"                   // Program version definition 
+#define progVersion "1.1"                   // Program version definition 
 /* ------------------------------------------------------------------------- *
  *             GNU LICENSE CONDITIONS
  * ------------------------------------------------------------------------- *
@@ -47,7 +49,7 @@
  * Compiler directives to switch debugging on / off
  * Do not enable DEBUG when not needed, Serial coms takes space and time!
  * ------------------------------------------------------------------------- */
-#define DEBUG 1
+#define DEBUG 0
 
 #if DEBUG == 1
   #define debugstart(x) Serial.begin(x)
@@ -73,57 +75,53 @@
 #define leftSensor       A2                 // Input pins
 #define rightSensor      A3                 //   from IR detectors
 
-#define scaleSelection   PD2                // Button to browse/seletc scale
+#define scaleSelection   PD2                // Button to browse/select scale
 
-#define leftDetection    PD3                // LED left detection
-#define rightDetection   PD4                // LED right detection
-#define measurement      PD5                // LED measurement active
+#define leftDetection    PD3                // LED left detected
+#define rightDetection   PD4                // LED right detected
 
-#define doMeasurement    PD6                // Button to start measurement
 
 /* ------------------------------------------------------------------------- *
- *                                                        Defines for states
+ *                                                         State definitions
  * ------------------------------------------------------------------------- */
-#define debounceWait     500                // time to wait after detection
+#define booting          0                  // From startup to ready
+#define waiting          1                  // Startup ready
+#define detectedLeft     2                  // Left sensor activated
+#define detectedRight    3                  // Right sensor activated
+#define changeScale      4                  // Scale change
+
+int state               = booting;          // Initial state
 
 /* ------------------------------------------------------------------------- *
  *                                          Create object for the LCD screen
  * ------------------------------------------------------------------------- */
-LiquidCrystal_I2C display1(0x27, 16, 4);    // Initialize display1 object
+LiquidCrystal_I2C display1(0x27, 16, 2);    // Initialize display1 object
 
 
 /* ------------------------------------------------------------------------- *
  *                                  Constants and variables for measurements
  * ------------------------------------------------------------------------- */
-float sensorDistance  = 200.0;               // Distance in mm
-float scaleFactor     = 0.0;                 // Scale Factor, default N-scale
-float realDistance    = sensorDistance       // Real Distance in meters
-                        * scaleFactor  
-                        / 1000;
-long  detectionTime   = 0;                   // Time between detections
-float realSpeed       = 0.0;
-
-
-/* ------------------------------------------------------------------------- *
- *                                                Variables timing detection
- * ------------------------------------------------------------------------- */
-unsigned long leftMillis  = 0;
-unsigned long rightMillis = 0;
+float sensorDistance  = 200.0;              // Distance in mm
+long  detectionTime   = 0;                  // Time between detections
+float scaleFactor     = 0.0;                // Scale Factor, default N-scale
+float realDistance    = 0.0;                // Holds calculated distance
+float realSpeed       = 0.0;                // Holds calculated speed
 
 
 /* ------------------------------------------------------------------------- *
  *                                            Array of NMRA scales and names
  * ------------------------------------------------------------------------- */
-float scales[8]        = {45.2, 
-                          48.0, 
-                          64.0, 
-                          76.0, 
-                          87.0, 
-                          120.0, 
-                          160.0, 
-                          220.0
+float scales[8]        = {45.2,             // for O(17) scale
+                          48.0,             // for O, On3, On2 scale
+                          64.0,             // for Sn3, S scale
+                          76.0,             // for OO scale
+                          87.0,             // for HO scale
+                          120.0,            // for TT scale
+                          160.0,            // for N, Nn3 scale
+                          220.0             // for Z scale
                          };
-char  scaleName[8][12] = {"O(17)",
+
+char  scaleName[8][12] = {"O(17)",          // NMRA descriptions
                           "O, On3, On2", 
                           "Sn3, S", 
                           "OO", 
@@ -133,7 +131,15 @@ char  scaleName[8][12] = {"O(17)",
                           "Z"
                          };
                          
-int   scalePtr = 6;                         // set default here
+int   scalePtr = 6;                         // set default scale here
+
+
+/* ------------------------------------------------------------------------- *
+ *                                            Variables for timing detection
+ * ------------------------------------------------------------------------- */
+unsigned long leftMillis  = 0;
+unsigned long rightMillis = 0;
+
 
 
 
@@ -143,9 +149,6 @@ int   scalePtr = 6;                         // set default here
 void setup() {
   debugstart(115000);   // make debug output fast
 
-  debug("GAW_Speedometer v");
-  debugln(progVersion);
-
   Wire.begin();         // Start I2C
 
                         // Initialize display backlight on by default
@@ -153,38 +156,42 @@ void setup() {
 
   pinMode(leftDetection, OUTPUT);
   pinMode(rightDetection, OUTPUT);
-  pinMode(measurement, OUTPUT);
 
   pinMode(scaleSelection, INPUT_PULLUP);
-  pinMode(doMeasurement, INPUT_PULLUP);
 
-  scaleFactor = scales[scalePtr];
+debug(F("GAW_Speedometer v"));
+debugln(progVersion);
 
-                        // Initial text on display
   LCD_display(display1, 0, 0, F("GAW_Speedometer "));
   LCD_display(display1, 1, 0, F("  Version       "));
   LCD_display(display1, 1,10, String(progVersion));
 
-  delayFor(3000);
+  delay(1500);
 
-  LCD_display(display1, 0, 0, F("Speed:          "));
-  LCD_display(display1, 1, 0, F("Scale:           ") );
-  LCD_display(display1, 1, 7, scaleName[scalePtr]);
-
-  realDistance = sensorDistance * scaleFactor / 1000.0;
+  state = booting;
 
 }
 
 
 
 /* ------------------------------------------------------------------------- *
- *       Initlialize system at reset                            initSystem()
+ *       Software initialization routine                          softBoot()
  * ------------------------------------------------------------------------- */
-void initSystem() {
+void softBoot() {
+
+                        // Initial text on display
+  scaleFactor = scales[scalePtr];
+
+  LCD_display(display1, 0, 0, F("Speed:          "));
+  LCD_display(display1, 1, 0, F("Scale:           ") );
+  LCD_display(display1, 1, 7, scaleName[scalePtr]);
 
   digitalWrite(leftDetection,  LOW);
   digitalWrite(rightDetection, LOW);
-  digitalWrite(measurement,    LOW);
+
+  realDistance = sensorDistance * scaleFactor / 1000.0;
+
+  state = waiting;
 
 }
 
@@ -195,39 +202,48 @@ void initSystem() {
  * ------------------------------------------------------------------------- */
 void loop() {
 
-  if ( !digitalRead(doMeasurement) ) {
-debug("Measurement starts - ");
-    digitalWrite( measurement, HIGH );
-    measure();
+  switch (state) {
+
+    case booting:                           // Re-initialize
+      softBoot();
+      break;
+
+    case waiting:                           // Wait for action
+
+      if (analogRead(leftSensor) < 200) {       // Left sensor detected
+        state = detectedLeft;
+        break;
+      }
+
+      if (analogRead(rightSensor) < 200) {      // Right sensor detected
+        state = detectedRight;
+        break;
+      }
+
+      if (!(digitalRead(scaleSelection)) ) {    // Select scale
+        state = changeScale;
+      }
+
+      break;
+
+    case detectedLeft:                      // Handle left to right traffic
+      leftToRight();
+      softBoot();
+      state = waiting;
+      break;
+
+    case detectedRight:                     // Handle right to left traffic
+      rightToLeft();
+      softBoot();
+      state = waiting;
+      break;
+
+    case changeScale:                       // choose scale
+      chooseScale();
+      state = waiting;
+      break;
+
   }
-
-  if ( !digitalRead(scaleSelection) ) {
-debugln("Select Scale");
-    chooseScale();
-  }
-
-}
-
-
-
-/* ------------------------------------------------------------------------- *
- *       Do measurment                                         measurement()
- * ------------------------------------------------------------------------- */
-void measure() {
-
-  do {
-  } while ( (analogRead(leftSensor)  > 200) && 
-            (analogRead(rightSensor) > 200)
-          );
-
-  if (analogRead(leftSensor) < 200) {
-    leftToRight();
-  } else 
-  if (analogRead(rightSensor) < 200) {
-    rightToLeft();
-  }
-
-  initSystem();
 
 }
 
@@ -238,20 +254,16 @@ void measure() {
  * ------------------------------------------------------------------------- */
 void leftToRight() {
 
-  int rValue = 999;
+debug("DetectedLeft, waitForRight - ");
 
-  leftMillis = millis();
-  debug("detectedLeft, waitForRight - ");
   digitalWrite(leftDetection, HIGH);
-//  delayFor(debounceWait);
+  leftMillis = millis();
 
   do {
-    rValue = analogRead(rightSensor);
-  } while ( rValue > 200 );
+  } while ( analogRead(rightSensor) > 200 );
 
   detectionTime = millis() - leftMillis;
   digitalWrite(rightDetection, HIGH);
-
   showSpeed();
 
 }
@@ -263,20 +275,16 @@ void leftToRight() {
  * ------------------------------------------------------------------------- */
 void rightToLeft() {
 
-  int lValue = 999;
+debug("DetectedRight, waitForLeft - ");
 
-  rightMillis = millis();
-  debug("detectedRight, waitForLeft - ");
   digitalWrite(rightDetection, HIGH);
-//  delayFor(debounceWait);
+  rightMillis = millis();
 
   do {
-    lValue = analogRead(leftSensor);
-  } while ( lValue > 200 );
+  } while ( analogRead(leftSensor) > 200 );
 
   detectionTime = millis() - rightMillis;
   digitalWrite(leftDetection, HIGH);
-
   showSpeed();
 
 }
@@ -284,7 +292,7 @@ void rightToLeft() {
 
 
 /* ------------------------------------------------------------------------- *
- *       Calculate and show RealSpeed                       calculateSpeed()
+ *       Calculate and show RealSpeed                            showSpeed()
  * ------------------------------------------------------------------------- */
 void showSpeed() {
 
@@ -300,20 +308,8 @@ debug(String(detectionTime));
 debug(" - Speed: ");
 debugln(String(realSpeed));
 
-  delayFor(500);
+  delay(5000);
 
-}
-
-
-
-/* ------------------------------------------------------------------------- *
- *       Delay operations for ms milliseconds                     delayFor()
- * ------------------------------------------------------------------------- */
-void delayFor(unsigned long ms) {
-  unsigned long start = millis();
-  do {
-    // Nothing
-  } while ( millis() < start + ms );
 }
 
 
@@ -322,25 +318,16 @@ void delayFor(unsigned long ms) {
  *       Choose and store scale                                chooseScale()
  * ------------------------------------------------------------------------- */
 void chooseScale() {
-  unsigned long scaleMillis;
 
-  scaleMillis = millis();
-
-  do {
-
-    if ( !digitalRead(scaleSelection) ) {
-      (scalePtr < 7)? scalePtr++ : scalePtr = 0;
-      scaleFactor = scales[scalePtr];
-    }
-
-    LCD_display(display1, 1, 0, F("Scale:          ") );
-    LCD_display(display1, 1, 7, scaleName[scalePtr]);
-
-    delayFor(250);
-
-  } while ( (millis() - scaleMillis) < 250);             // give max one second to change
-
+  (scalePtr < 7)? scalePtr++ : scalePtr = 0;
+  scaleFactor = scales[scalePtr];
+                                            // re-calculate realDistance
   realDistance = sensorDistance * scaleFactor / 1000.0;
+
+  LCD_display(display1, 1, 0, F("Scale:          ") );
+  LCD_display(display1, 1, 7, scaleName[scalePtr]);
+
+  delay(250);                               // debounce
 
 }
 

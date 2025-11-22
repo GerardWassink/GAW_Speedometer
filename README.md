@@ -46,4 +46,4 @@ The Reset button performs a hard reset of the Arduino,
 creating a situation resembling a power off / power on.
 
 ## Schematic
-A [schematic](./schematic/GAW_Speedometer_schematic.png) is available to make your own.
+A [schematic](./schematic/GAW_Speedometer_schematic_v1.1.png) is available to make your own.

@@ -13,15 +13,7 @@ This menu can be reached by pressing a button.
 It looks like this:
 
 
-|****************************|
-|**|  Configuation menu   |**|
-|****************************|
-
-Select one of the following options:
-1 Select scale
-2 Set sensor distance
-X Exit configuration menu
-
+[main menu](./main-menu.png)
 
 
 ## Scale
@@ -31,21 +23,7 @@ This default scale for the measurements can be altered to in total 8 NMRA scales
 The scale selection menu looks as follows:
 
 
-|****************************|
-|**|  Scale selection     |**|
-|****************************|
-
-Select a scale by choosing the number:
-
-0 - O(17)
-1 - O, On3, On2
-2 - Sn3, S
-3 - OO
-4 - HO
-5 - TT
-6 - N, Nn3
-7 - Z
-X - Leave
+[scale selection menu](./scale_select_menu.png)
 
 
 ## Sensors
@@ -56,14 +34,7 @@ That looks like this:
 
 
 
-|****************************|
-|**|  Set sensor distance |**|
-|**|  in millimeters      |**|
-|****************************|
-
-Current sensor distance = 200.00
-
-Specify desired sensor distance: 
+[sensor distance entry](./sensor_distance_entry.png)
 
 
 

@@ -19,9 +19,12 @@
  *   1.0  : First Release
  *   1.1  : Code change, automatic measurement start
  *            for that purpose: re-instated state-machine
+ *   1.2  : Built in CLI user interface for:
+ *            - scale selection
+ *            - entering sensor distance in mm
  *
  *------------------------------------------------------------------------- */
-#define progVersion "1.1"                   // Program version definition 
+#define progVersion "1.2"                   // Program version definition 
 /* ------------------------------------------------------------------------- *
  *             GNU LICENSE CONDITIONS
  * ------------------------------------------------------------------------- *
@@ -49,7 +52,7 @@
  * Compiler directives to switch debugging on / off
  * Do not enable DEBUG when not needed, Serial coms takes space and time!
  * ------------------------------------------------------------------------- */
-#define DEBUG 0
+#define DEBUG 1
 
 #if DEBUG == 1
   #define debugstart(x) Serial.begin(x)
@@ -67,6 +70,7 @@
  * ------------------------------------------------------------------------- */
 #include <Wire.h>                           // I2C comms library
 #include <LiquidCrystal_I2C.h>              // LCD library
+#include <EEPROM.h>                         // EEPROM library
 
 
 /* ------------------------------------------------------------------------- *
@@ -88,7 +92,7 @@
 #define waiting          1                  // Startup ready
 #define detectedLeft     2                  // Left sensor activated
 #define detectedRight    3                  // Right sensor activated
-#define changeScale      4                  // Scale change
+#define buttonPressed    4                  // start CLI
 
 int state               = booting;          // Initial state
 
@@ -96,6 +100,16 @@ int state               = booting;          // Initial state
  *                                          Create object for the LCD screen
  * ------------------------------------------------------------------------- */
 LiquidCrystal_I2C display1(0x27, 16, 2);    // Initialize display1 object
+
+
+/* ------------------------------------------------------------------------- *
+ *       Create structure and object for settings to store them to EEPROM
+ * ------------------------------------------------------------------------- */
+struct Settings {
+  int  senseDistance;                       // Distance between sensors
+  int  selectedScale;                       // The scale the user selected
+};
+Settings mySettings;                        // Create the object
 
 
 /* ------------------------------------------------------------------------- *
@@ -147,11 +161,12 @@ unsigned long rightMillis = 0;
  *       Initialization routine                                      setup()
  * ------------------------------------------------------------------------- */
 void setup() {
-  debugstart(115000);   // make debug output fast
+  Serial.begin(115000);                     // make debug output fast
 
-  Wire.begin();         // Start I2C
+  Wire.begin();                             // Start I2C
 
-                        // Initialize display backlight on by default
+                                            // Initialize display backlight 
+                                            //   on by default
   display1.init(); display1.backlight();
 
   pinMode(leftDetection, OUTPUT);
@@ -161,6 +176,11 @@ void setup() {
 
 debug(F("GAW_Speedometer v"));
 debugln(progVersion);
+
+/* ------- Uncomment this line one time, to store initial values ----------- */
+//  storeSettings();                          // Store settings to EEPROM
+
+  getSettings();                            // Get settings from EEPROM
 
   LCD_display(display1, 0, 0, F("GAW_Speedometer "));
   LCD_display(display1, 1, 0, F("  Version       "));
@@ -193,6 +213,10 @@ void softBoot() {
 
   state = waiting;
 
+  Serial.println();
+  Serial.println("---===###   Ready for operations   ###===---");
+  Serial.println();
+
 }
 
 
@@ -210,37 +234,37 @@ void loop() {
 
     case waiting:                           // Wait for action
 
-      if (analogRead(leftSensor) < 200) {       // Left sensor detected
+      if (analogRead(leftSensor) < 200) {   // Left sensor detected
         state = detectedLeft;
         break;
       }
 
-      if (analogRead(rightSensor) < 200) {      // Right sensor detected
+      if (analogRead(rightSensor) < 200) {  // Right sensor detected
         state = detectedRight;
         break;
       }
 
-      if (!(digitalRead(scaleSelection)) ) {    // Select scale
-        state = changeScale;
+      if (!(digitalRead(scaleSelection)) ) {  // Select scale
+        state = buttonPressed;
       }
 
       break;
 
     case detectedLeft:                      // Handle left to right traffic
       leftToRight();
-      softBoot();
+      softBoot();                           // soft reboot
       state = waiting;
       break;
 
     case detectedRight:                     // Handle right to left traffic
       rightToLeft();
-      softBoot();
+      softBoot();                           // soft reboot
       state = waiting;
       break;
 
-    case changeScale:                       // choose scale
-      chooseScale();
-      state = waiting;
+    case buttonPressed:                     // choose scale
+      configMenu();                         // Handle user input on CLI
+      state = booting;                      // soft reboot
       break;
 
   }
@@ -256,14 +280,14 @@ void leftToRight() {
 
 debug("DetectedLeft, waitForRight - ");
 
-  digitalWrite(leftDetection, HIGH);
+  digitalWrite(leftDetection, HIGH);        // light up left detected
   leftMillis = millis();
 
   do {
-  } while ( analogRead(rightSensor) > 200 );
+  } while ( analogRead(rightSensor) > 200 ); // wait for right detection
 
   detectionTime = millis() - leftMillis;
-  digitalWrite(rightDetection, HIGH);
+  digitalWrite(rightDetection, HIGH);       // light up right detected
   showSpeed();
 
 }
@@ -277,14 +301,14 @@ void rightToLeft() {
 
 debug("DetectedRight, waitForLeft - ");
 
-  digitalWrite(rightDetection, HIGH);
+  digitalWrite(rightDetection, HIGH);       // light up right detected
   rightMillis = millis();
 
   do {
-  } while ( analogRead(leftSensor) > 200 );
+  } while ( analogRead(leftSensor) > 200 ); // wait for left detection
 
   detectionTime = millis() - rightMillis;
-  digitalWrite(leftDetection, HIGH);
+  digitalWrite(leftDetection, HIGH);        // light up left detected
   showSpeed();
 
 }
@@ -308,27 +332,209 @@ debug(String(detectionTime));
 debug(" - Speed: ");
 debugln(String(realSpeed));
 
-  delay(5000);
+  delay(5000);                              // show for 5 seconds
+
+}
+
+
+/* ------------------------------------------------------------------------- *
+ *       Start command line interface                            configMenu()
+ * ------------------------------------------------------------------------- */
+void configMenu(){
+  int save_int, stop, choice;
+  float save_float, new_float;
+
+  do {
+    Serial.println();
+    Serial.println("|****************************|");
+    Serial.println("|**|  Configuation menu   |**|");
+    Serial.println("|****************************|");
+    Serial.println("");
+    Serial.println("Select one of the following options:");
+    Serial.println("1 Select scale");
+    Serial.println("2 Set sensor distance");
+    Serial.println("X Exit configuration menu");
+    Serial.println();
+
+    do {
+      stop = 0;
+      choice = Serial.read();
+      switch(choice) {
+
+        case '1':
+          save_int = scalePtr;
+          chooseScale();                    // Ask for new scale
+          if (scalePtr != save_int) {       // only store when changed
+            storeSettings();
+          }
+          stop = 1;
+          continue;
+
+        case '2':
+          save_float = sensorDistance;
+          new_float = getSensorDistance();  // Ask for new sensor distance
+          if (new_float != save_float) {    // only store when changed
+            sensorDistance = new_float;
+            storeSettings();
+          }
+          stop = 1;
+          break;
+
+        case 'X':
+          Serial.println("Leaving configuration menu");
+          stop = 1;
+          continue;
+
+        default:
+          break;
+      }
+
+    } while(stop==0);
+
+  } while(choice != 'X');
+
+ }
+
+
+/* ------------------------------------------------------------------------- *
+ *       Get new sensor distance in mm                   getSensorDistance()
+ * ------------------------------------------------------------------------- */
+float getSensorDistance() {
+  float dist_float;
+  bool valid = false;
+
+  Serial.println();
+  Serial.println("|****************************|");
+  Serial.println("|**|  Set sensor distance |**|");
+  Serial.println("|**|  in millimeters      |**|");
+  Serial.println("|****************************|");
+  Serial.println("");
+  Serial.print("Current sensor distance = ");
+  Serial.println(sensorDistance);
+  Serial.println("");
+  Serial.print("Specify desired sensor distance: ");
+
+  do {
+    if (Serial.available()) {
+      dist_float = Serial.parseFloat();
+      if (dist_float != 0) {
+        valid = true;
+        Serial.print("You entered: ");
+        Serial.println(dist_float);
+      }
+    }
+  } while(!valid);
+
+  return(dist_float);
+}
+
+
+/* ------------------------------------------------------------------------- *
+ *       Choose scale                                          chooseScale()
+ * ------------------------------------------------------------------------- */
+void chooseScale() {
+
+  int choice = 'Z';
+
+  do {
+    Serial.println();
+    Serial.println("|****************************|");
+    Serial.println("|**|  Scale selection     |**|");
+    Serial.println("|****************************|");
+    Serial.println("");
+    Serial.println("Select a scale by choosing the number:");
+    Serial.println("");
+
+    for (int i=0; i<=7; i++) {
+      Serial.print(i);
+      Serial.print(" - ");
+      Serial.println( scaleName[i] );
+    }
+    Serial.println("X - Leave");
+
+    for (;;) {
+      choice = Serial.read();
+
+      switch(choice) {
+
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+          Serial.print("   Selected scale: ");
+          Serial.print(choice-48);
+          Serial.print(" - ");
+          Serial.println( scaleName[choice-48] );
+
+          scalePtr = choice-48;
+          scaleFactor = scales[scalePtr];           // re-calculate realDistance
+          realDistance = sensorDistance * scaleFactor / 1000.0;
+
+          LCD_display(display1, 1, 0, F("Scale:          ") );
+          LCD_display(display1, 1, 7, scaleName[scalePtr]);
+          Serial.println( F("Leaving scale selection") );
+          return;
+
+        case 'X':
+          Serial.println( F("Leaving scale selection") );
+          return;
+
+        default:
+          continue;
+      } 
+    }
+  } while(choice != 'X');
+}
+
+
+/* ------------------------------------------------------------------------- *
+ *       Store settings to EEPROM                            storeSettings()
+ * ------------------------------------------------------------------------- */
+void storeSettings() {
+
+debugln(F("Store settings to EEPROM"));
+                                            // Put settings in 
+                                            //  mySettings structure
+  mySettings.senseDistance = sensorDistance;
+  mySettings.selectedScale = scalePtr;
+
+                                            // Store mySettings structure 
+                                            //  to EEPROM
+  EEPROM.put(0, mySettings);
+
+debugln();
+debug("Stored: selected scale (");
+debug(scaleName[scalePtr]);
+debug(") - and sensor distance (");
+debug(mySettings.senseDistance);
+debugln(")");
 
 }
 
 
 
 /* ------------------------------------------------------------------------- *
- *       Choose and store scale                                chooseScale()
+ *       Retrieve settings from EEPROM                         getSettings()
  * ------------------------------------------------------------------------- */
-void chooseScale() {
+void getSettings() {
 
-  (scalePtr < 7)? scalePtr++ : scalePtr = 0;
-  scaleFactor = scales[scalePtr];
-                                            // re-calculate realDistance
-  realDistance = sensorDistance * scaleFactor / 1000.0;
+  debugln(F("Retrieving settings from EEPROM"));
+  
+                                            // Get mySettings structure 
+                                            //  from EEPROM
+  EEPROM.get(0, mySettings);
 
-  LCD_display(display1, 1, 0, F("Scale:          ") );
-  LCD_display(display1, 1, 7, scaleName[scalePtr]);
+                                            // Get settings from 
+                                            //  mySettings structure
+  sensorDistance = mySettings.senseDistance;
+  scalePtr       = mySettings.selectedScale;
 
-  delay(250);                               // debounce
-
+  debugln("Retrieved Sensor distance in mm:" + String(sensorDistance) );
+  debugln("Retrieved Scale: " + String(scalePtr) + " being: " + scaleName[scalePtr]);
 }
 
 

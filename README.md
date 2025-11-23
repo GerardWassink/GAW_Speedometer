@@ -13,7 +13,7 @@ This menu can be reached by pressing a button.
 It looks like this:
 
 
-[main menu](./main-menu.png)
+![main menu](./main-menu.png)
 
 
 ## Scale
@@ -23,7 +23,7 @@ This default scale for the measurements can be altered to in total 8 NMRA scales
 The scale selection menu looks as follows:
 
 
-[scale selection menu](./scale_select_menu.png)
+![scale selection menu](./scale_select_menu.png)
 
 
 ## Sensors
@@ -34,7 +34,7 @@ That looks like this:
 
 
 
-[sensor distance entry](./sensor_distance_entry.png)
+![sensor distance entry](./sensor_distance_entry.png)
 
 
 

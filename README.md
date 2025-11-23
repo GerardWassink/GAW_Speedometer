@@ -4,46 +4,82 @@ The core is an Arduino nano. The output is going to an LCD 16x02 display.
 Two infrared sensors are used to pick up trains rolling by and measuring 
 the milliseconds it takes from one to the other sensor. 
 It works bi-directional.
+A measurement stays available for 5 seconds.
+After that the system reverts to automatic bi-directional measurement mode.
+
+## Settings
+In version 1.2, a settings menu has been built in using the serial interface.
+This menu can be reached by pressing a button.
+It looks like this:
+
+
+|****************************|
+|**|  Configuation menu   |**|
+|****************************|
+
+Select one of the following options:
+1 Select scale
+2 Set sensor distance
+X Exit configuration menu
+
+
 
 ## Scale
 In model railroading the scale of course is important for the speed calculation. 
 The default scale in this program is N-scale which is 1:160. 
 This default scale for the measurements can be altered to in total 8 NMRA scales.
+The scale selection menu looks as follows:
+
+
+|****************************|
+|**|  Scale selection     |**|
+|****************************|
+
+Select a scale by choosing the number:
+
+0 - O(17)
+1 - O, On3, On2
+2 - Sn3, S
+3 - OO
+4 - HO
+5 - TT
+6 - N, Nn3
+7 - Z
+X - Leave
+
+
+## Sensors
+The device works with two IR sensors. These have a certain distance, and the program has to be aware of that.
+To be able to set the distance of the sensors we can activate the second menu entry (2).
+There we can enter the distance in mm between the sensors.
+That looks like this:
+
+
+
+|****************************|
+|**|  Set sensor distance |**|
+|**|  in millimeters      |**|
+|****************************|
+
+Current sensor distance = 200.00
+
+Specify desired sensor distance: 
+
+
 
 ## Operation
 The following functions are available.
 
 ### Start Measurement
-Measurement starts when one of the IR sensors is activated by a passing train.
+A measurement starts when one of the IR sensors is activated by a passing train.
 The appropriate (left or right) LED will be switched on to indicate the start of the measurement.
 The device now waits for the other sensor. 
-It now measures the time it took. 
+It then measures the time it took for the train to reach the other sensor. 
 As soon as the scond sensor is activated the scale-speed is calculated and displayed.
 
-### Set Scale
-When the device is switched on the default scale is presented. 
-As long as no measurement is taking place one can use the scale button, 
-to switch to the next scale in the scale table.
-
-
-Available scales (from NMRA) are:
-
-| Index | Scale name  | Factor |
-|-------|-------------|--------|
-| 0     | O(17)       | 45.2   |
-| 1     | O, On3, On2 | 48.0   |
-| 2     | Sn3, S      | 64.0   |
-| 3     | |OO         | 76.0   |
-| 4     | |HO         | 87.0   |
-| 5     | TT          | 120.0  |
-| 6     | N, Nn3      | 160.0  |
-| 7     | Z           | 220.0  |
-
-In the program, the default scale is designated by the value of ***scalePtr***, it's initial value is 6 for N-scale.
 
 ### Reset
-The Reset button performs a hard reset of the Arduino, 
-creating a situation resembling a power off / power on.
+The Reset button performs a hard reset of the Arduino,  creating a situation resembling a power off / power on.
 
 ## Schematic
 A [schematic](./schematic/GAW_Speedometer_schematic_v1.1.png) is available to make your own.

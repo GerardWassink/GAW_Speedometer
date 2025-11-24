@@ -52,7 +52,7 @@ That looks like this:
 The following functions are available.
 See also this state diagram:
 
-![scale selection menu](./gfx/StateDiagram-2.1.png)
+![scale selection menu](./gfx/StateDiagram_2.1.png)
 
 
 ### Measurement

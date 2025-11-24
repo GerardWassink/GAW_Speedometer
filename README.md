@@ -8,12 +8,12 @@ A measurement stays available for 5 seconds.
 After that the system reverts to automatic bi-directional measurement mode.
 
 ## Settings
-In version 1.2, a settings menu has been built in using the serial interface.
+A settings menu has been built in using the serial interface.
 This menu can be reached by pressing a button.
 It looks like this:
 
 
-![main menu](./gfx/main-menu.png)
+![main menu](./gfx/main-menu-2.1.png)
 
 
 ## Scale
@@ -36,6 +36,16 @@ That looks like this:
 
 ![sensor distance entry](./gfx/sensor_distance_entry.png)
 
+
+
+## Sensors treshold
+The treshold for the left and right sensors can be configured using the config menu.
+Default value for both is 200.
+That looks like this:
+
+![Left sensor treshold](./gfx/leftTreshold.png)
+
+![Right sensor treshold](./gfx/rightTreshold.png)
 
 
 ## Operation

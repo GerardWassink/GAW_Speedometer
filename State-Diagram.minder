@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<minder version="1.17" parent-etag="1542132771" etag="1060461549">
+<minder version="1.17" parent-etag="3296598" etag="1809736792">
   <theme name="dark" label="Dark" index="-1"/>
   <styles>
     <style level="0" isset="true" branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true" connectiondash="dotted" connectionlwidth="2" connectionarrow="fromto" connectionpadding="3" connectionfont="Sans 10" connectiontwidth="100" calloutfont="Sans 12" calloutpadding="5" calloutptrwidth="20" calloutptrlength="20"/>
@@ -18,44 +18,46 @@
     <image id="1" uri="file:///home/gerard/stack/git/GAW_Speedometer/scale_select_menu.png" ext=".png"/>
     <image id="2" uri="file:///home/gerard/stack/git/GAW_Speedometer/main-menu.png" ext=".png"/>
     <image id="3" uri="file:///home/gerard/stack/git/GAW_Speedometer/sensor_distance_entry.png" ext=".png"/>
+    <image id="5" uri="file:///home/gerard/stack/git/GAW_Speedometer/gfx/rightTreshold.png" ext=".png"/>
+    <image id="6" uri="file:///home/gerard/stack/git/GAW_Speedometer/gfx/leftTreshold.png" ext=".png"/>
   </images>
   <nodes>
-    <node id="0" posx="109.84205959321827" posy="430.16731735194782" width="124" height="36" side="left" fold="false" sequence="false" treesize="948.15902709960938" summarized="false" layout="Manual" group="false">
+    <node id="0" posx="109.84205959321827" posy="430.16731735194782" width="124" height="36" side="left" fold="false" sequence="false" treesize="1211.7168350219727" summarized="false" layout="Manual" group="false">
       <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
       <nodename maxwidth="200">
         <text data="State Diagram"/>
       </nodename>
       <nodenote></nodenote>
       <nodes>
-        <node id="1" posx="328.03151271821832" posy="35.840535125385315" width="116" height="36" side="right" fold="false" sequence="false" treesize="149.42158508300781" color="#c6262e" colorroot="false" summarized="false" layout="Manual" group="false">
+        <node id="1" posx="328.03151271821832" posy="-58.688586273540409" width="116" height="36" side="right" fold="false" sequence="false" treesize="149.42158508300781" color="#c6262e" colorroot="false" summarized="false" layout="Manual" group="false">
           <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
           <nodename maxwidth="200">
             <text data="Physical boot"/>
           </nodename>
           <nodenote></nodenote>
           <nodes>
-            <node id="24" posx="474.14454982759332" posy="-18.562464752544372" width="143" height="36" side="right" fold="false" sequence="false" treesize="36" color="#c6262e" colorroot="false" summarized="false" layout="Manual" group="false">
+            <node id="24" posx="474.14454982759332" posy="-113.0915861514701" width="143" height="36" side="right" fold="false" sequence="false" treesize="36" color="#c6262e" colorroot="false" summarized="false" layout="Manual" group="false">
               <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
               <nodename maxwidth="200">
                 <text data="Initialize libraries"/>
               </nodename>
               <nodenote></nodenote>
             </node>
-            <node id="25" posx="474.59474514009332" posy="19.21648117030719" width="193" height="36" side="right" fold="false" sequence="false" treesize="36" color="#c6262e" colorroot="false" summarized="false" layout="Manual" group="false">
+            <node id="25" posx="474.59474514009332" posy="-75.312640228618534" width="193" height="36" side="right" fold="false" sequence="false" treesize="36" color="#c6262e" colorroot="false" summarized="false" layout="Manual" group="false">
               <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
               <nodename maxwidth="200">
                 <text data="Display name &amp; version"/>
               </nodename>
               <nodenote></nodenote>
             </node>
-            <node id="22" posx="473.17067287446832" posy="56.844136199604065" width="215" height="36" side="right" fold="false" sequence="false" treesize="36" color="#c6262e" colorroot="false" summarized="false" layout="Manual" group="false">
+            <node id="22" posx="473.17067287446832" posy="-37.684985199321659" width="215" height="36" side="right" fold="false" sequence="false" treesize="36" color="#c6262e" colorroot="false" summarized="false" layout="Manual" group="false">
               <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
               <nodename maxwidth="200">
                 <text data="Get Settings from EEPROM"/>
               </nodename>
               <nodenote></nodenote>
             </node>
-            <node id="26" posx="470.08473537446832" posy="94.85912033046344" width="163" height="36" side="right" fold="false" sequence="false" treesize="36" color="#c6262e" colorroot="false" summarized="false" layout="Manual" group="false">
+            <node id="26" posx="470.08473537446832" posy="0.32999893153771609" width="163" height="36" side="right" fold="false" sequence="false" treesize="36" color="#c6262e" colorroot="false" summarized="false" layout="Manual" group="false">
               <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
               <nodename maxwidth="200">
                 <text data="Proceed at softboot"/>
@@ -64,28 +66,28 @@
             </node>
           </nodes>
         </node>
-        <node id="2" posx="324.56276271821832" posy="206.84811874354938" width="85" height="36" side="right" fold="false" sequence="false" treesize="120.30694580078125" color="#f37329" colorroot="false" summarized="false" layout="Manual" group="false">
+        <node id="2" posx="324.56276271821832" posy="112.31899734462365" width="85" height="36" side="right" fold="false" sequence="false" treesize="120.30694580078125" color="#f37329" colorroot="false" summarized="false" layout="Manual" group="false">
           <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
           <nodename maxwidth="200">
             <text data="Soft boot"/>
           </nodename>
           <nodenote></nodenote>
           <nodes>
-            <node id="27" posx="467.06447170259332" posy="175.05789657558063" width="134" height="36" side="right" fold="false" sequence="false" treesize="36" color="#f37329" colorroot="false" summarized="false" layout="Manual" group="false">
+            <node id="27" posx="467.06447170259332" posy="80.528775176654904" width="134" height="36" side="right" fold="false" sequence="false" treesize="36" color="#f37329" colorroot="false" summarized="false" layout="Manual" group="false">
               <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
               <nodename maxwidth="200">
                 <text data="Initialize Screen"/>
               </nodename>
               <nodenote></nodenote>
             </node>
-            <node id="28" posx="464.08473537446832" posy="216.12912460292438" width="210" height="36" side="right" fold="false" sequence="false" treesize="36" color="#f37329" colorroot="false" summarized="false" layout="Manual" group="false">
+            <node id="28" posx="464.08473537446832" posy="121.60000320399865" width="210" height="36" side="right" fold="false" sequence="false" treesize="36" color="#f37329" colorroot="false" summarized="false" layout="Manual" group="false">
               <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
               <nodename maxwidth="200">
                 <text data="Swittch of detection LED's"/>
               </nodename>
               <nodenote></nodenote>
             </node>
-            <node id="30" posx="464.98292873384332" posy="259.36484237636188" width="396" height="36" side="right" fold="false" sequence="false" treesize="36" color="#f37329" colorroot="false" summarized="false" layout="Manual" group="false">
+            <node id="30" posx="464.98292873384332" posy="164.83572097743615" width="396" height="36" side="right" fold="false" sequence="false" treesize="36" color="#f37329" colorroot="false" summarized="false" layout="Manual" group="false">
               <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="370" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
               <nodename maxwidth="381.80615234375">
                 <text data="Msg: ---===### Ready for operations ###===---"/>
@@ -94,35 +96,35 @@
             </node>
           </nodes>
         </node>
-        <node id="3" posx="276.60963771821832" posy="581.2440843197212" width="156" height="36" side="right" fold="false" sequence="false" treesize="595.87490844726562" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+        <node id="3" posx="276.60963771821832" posy="581.2440843197212" width="156" height="36" side="right" fold="false" sequence="false" treesize="859.44740295410156" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
           <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
           <nodename maxwidth="200">
             <text data="Measuring process"/>
           </nodename>
           <nodenote></nodenote>
           <nodes>
-            <node id="13" posx="506.38405178071832" posy="368.56723495448688" width="218" height="54" side="right" fold="false" sequence="false" treesize="91.28094482421875" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+            <node id="13" posx="506.38405178071832" posy="274.0234269710885" width="218" height="54" side="right" fold="false" sequence="false" treesize="91.28094482421875" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
               <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
               <nodename maxwidth="200">
                 <text data="Wait for left or right sensor activation"/>
               </nodename>
               <nodenote></nodenote>
               <nodes>
-                <node id="14" posx="759.34083889009332" posy="369.07742782558063" width="207" height="54" side="right" fold="false" sequence="false" treesize="91.28094482421875" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                <node id="14" posx="759.34083889009344" posy="274.53361984218225" width="207" height="54" side="right" fold="false" sequence="false" treesize="91.28094482421875" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
                   <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
                   <nodename maxwidth="200">
                     <text data="measuring mode, wait for other sensot"/>
                   </nodename>
                   <nodenote></nodenote>
                   <nodes>
-                    <node id="15" posx="978.79762599946832" posy="333.72165389979938" width="209" height="90" side="right" fold="false" sequence="false" treesize="91.28094482421875" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                    <node id="15" posx="978.79762599946844" posy="239.177845916401" width="209" height="90" side="right" fold="false" sequence="false" treesize="91.28094482421875" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
                       <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
                       <nodename maxwidth="200">
                         <text data="Calulate time and derive speed depending on scale and distance, display speed for five seconds"/>
                       </nodename>
                       <nodenote></nodenote>
                       <nodes>
-                        <node id="16" posx="1201.1101259994682" posy="389.00259872401813" width="163" height="36" side="right" fold="false" sequence="false" treesize="36" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                        <node id="16" posx="1201.1101259994682" posy="294.45879074061975" width="163" height="36" side="right" fold="false" sequence="false" treesize="36" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
                           <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
                           <nodename maxwidth="200">
                             <text data="Proceed at softboot"/>
@@ -135,44 +137,44 @@
                 </node>
               </nodes>
             </node>
-            <node id="4" posx="484.20704982759332" posy="698.0756272884712" width="156" height="36" side="right" fold="false" sequence="false" treesize="460.8433837890625" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+            <node id="4" posx="484.20704982759332" posy="698.0756272884712" width="156" height="36" side="right" fold="false" sequence="false" treesize="724.44525146484375" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
               <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
               <nodename maxwidth="200">
                 <text data="At button interrupt"/>
               </nodename>
               <nodenote></nodenote>
               <nodes>
-                <node id="6" posx="720.20704982759332" posy="641.5756272884712" width="218" height="149" side="right" fold="false" sequence="false" treesize="460.8433837890625" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                <node id="6" posx="720.20704982759344" posy="641.5756272884712" width="218" height="149" side="right" fold="false" sequence="false" treesize="724.44525146484375" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
                   <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
-                  <nodeimage id="2" x="0" y="0" w="600" h="324" size="200"/>
+                  <nodeimage id="2" x="0" y="0" w="600" h="324"/>
                   <nodename maxwidth="200">
                     <text data="Configuration menu (CLI)"/>
                   </nodename>
                   <nodenote></nodenote>
                   <nodes>
-                    <node id="7" posx="1022.8208193588433" posy="646.9865159603462" width="27" height="36" side="right" fold="false" sequence="false" treesize="214.23333740234375" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                    <node id="7" posx="1022.8208193588434" posy="552.41333480800245" width="27" height="36" side="right" fold="false" sequence="false" treesize="214.23333740234375" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
                       <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
                       <nodename maxwidth="200">
                         <text data="1"/>
                       </nodename>
                       <nodenote></nodenote>
                       <nodes>
-                        <node id="8" posx="1067.6750674057182" posy="468.7531785580025" width="218" height="214" side="right" fold="false" sequence="false" treesize="214.18194580078125" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                        <node id="8" posx="1067.6750674057182" posy="374.17999740565875" width="218" height="214" side="right" fold="false" sequence="false" treesize="214.18194580078125" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
                           <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
-                          <nodeimage id="1" x="0" y="0" w="600" h="519" size="200"/>
+                          <nodeimage id="1" x="0" y="0" w="600" h="519"/>
                           <nodename maxwidth="200">
                             <text data="ChooseScale"/>
                           </nodename>
                           <nodenote></nodenote>
                           <nodes>
-                            <node id="18" posx="1294.2170595932182" posy="646.8096360775337" width="206" height="36" side="right" fold="false" sequence="false" treesize="36.12548828125" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                            <node id="18" posx="1294.2170595932182" posy="552.23645492518995" width="206" height="36" side="right" fold="false" sequence="false" treesize="36.12548828125" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
                               <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
                               <nodename maxwidth="200">
                                 <text data="Store settings in EEPROM"/>
                               </nodename>
                               <nodenote></nodenote>
                               <nodes>
-                                <node id="19" posx="1508.5691103744682" posy="646.9351243587837" width="222" height="36" side="right" fold="false" sequence="false" treesize="36" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                                <node id="19" posx="1508.5691103744682" posy="552.36194320643995" width="222" height="36" side="right" fold="false" sequence="false" treesize="36" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
                                   <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="203" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
                                   <nodename maxwidth="204.14013671875">
                                     <text data="Back to Configuration menu"/>
@@ -185,29 +187,29 @@
                         </node>
                       </nodes>
                     </node>
-                    <node id="9" posx="1036.4358095932182" posy="825.65027328456495" width="27" height="36" side="right" fold="false" sequence="false" treesize="176.95245361328125" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                    <node id="9" posx="1036.4358095932182" posy="731.0770921322212" width="27" height="36" side="right" fold="false" sequence="false" treesize="176.95245361328125" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
                       <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
                       <nodename maxwidth="200">
                         <text data="2"/>
                       </nodename>
                       <nodenote></nodenote>
                       <nodes>
-                        <node id="10" posx="1072.6140322494682" posy="684.6978196712837" width="218" height="176" side="right" fold="false" sequence="false" treesize="176" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                        <node id="10" posx="1072.6140322494682" posy="590.12463851893995" width="218" height="176" side="right" fold="false" sequence="false" treesize="176" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
                           <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
-                          <nodeimage id="3" x="0" y="0" w="600" h="405" size="200"/>
+                          <nodeimage id="3" x="0" y="0" w="600" h="405"/>
                           <nodename maxwidth="200">
                             <text data="GetSensorDistance"/>
                           </nodename>
                           <nodenote></nodenote>
                           <nodes>
-                            <node id="20" posx="1297.4284853744682" posy="824.40198226893995" width="206" height="36" side="right" fold="false" sequence="false" treesize="36.39300537109375" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                            <node id="20" posx="1297.4284853744682" posy="729.8288011165962" width="206" height="36" side="right" fold="false" sequence="false" treesize="36.39300537109375" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
                               <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
                               <nodename maxwidth="200">
                                 <text data="Store settings in EEPROM"/>
                               </nodename>
                               <nodenote></nodenote>
                               <nodes>
-                                <node id="21" posx="1517.9616884994682" posy="824.0089768978462" width="222" height="36" side="right" fold="false" sequence="false" treesize="36" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                                <node id="21" posx="1517.9616884994682" posy="729.43579574550245" width="222" height="36" side="right" fold="false" sequence="false" treesize="36" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
                                   <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
                                   <nodename maxwidth="204.09716796875">
                                     <text data="Back to Configuration menu"/>
@@ -220,21 +222,91 @@
                         </node>
                       </nodes>
                     </node>
-                    <node id="11" posx="1038.2070498275932" posy="893.0756272884712" width="28" height="36" side="right" fold="false" sequence="false" treesize="36.52093505859375" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                    <node id="31" posx="1034.7956728744684" posy="874.87021347011193" width="27" height="36" side="right" fold="false" sequence="false" treesize="139.5697021484375" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                      <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
+                      <nodename maxwidth="200">
+                        <text data="3"/>
+                      </nodename>
+                      <nodenote></nodenote>
+                      <nodes>
+                        <node id="32" posx="1075.3093447494684" posy="771.60971542323693" width="218" height="139" side="right" fold="false" sequence="false" treesize="139.5697021484375" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                          <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
+                          <nodeimage id="6" x="0" y="0" w="600" h="296"/>
+                          <nodename maxwidth="200">
+                            <text data="getLeftTreshold"/>
+                          </nodename>
+                          <nodenote></nodenote>
+                          <nodes>
+                            <node id="33" posx="1297.5903506088434" posy="874.51749130214318" width="206" height="36" side="right" fold="false" sequence="false" treesize="36.66192626953125" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                              <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
+                              <nodename maxwidth="200">
+                                <text data="Store settings in EEPROM"/>
+                              </nodename>
+                              <nodenote></nodenote>
+                              <nodes>
+                                <node id="34" posx="1514.4497256088434" posy="875.17941757167443" width="222" height="36" side="right" fold="false" sequence="false" treesize="36" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                                  <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
+                                  <nodename maxwidth="204.09716796875">
+                                    <text data="Back to Configuration menu"/>
+                                  </nodename>
+                                  <nodenote></nodenote>
+                                </node>
+                              </nodes>
+                            </node>
+                          </nodes>
+                        </node>
+                      </nodes>
+                    </node>
+                    <node id="35" posx="1044.0864443588434" posy="1016.3187913509714" width="27" height="36" side="right" fold="false" sequence="false" treesize="141.15698242187307" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                      <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
+                      <nodename maxwidth="200">
+                        <text data="4"/>
+                      </nodename>
+                      <nodenote></nodenote>
+                      <nodes>
+                        <node id="36" posx="1075.0815615463434" posy="912.37439437831517" width="218" height="140" side="right" fold="false" sequence="false" treesize="141.15698242187307" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                          <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
+                          <nodeimage id="5" x="0" y="0" w="600" h="297"/>
+                          <nodename maxwidth="200">
+                            <text data="getRightTreshold"/>
+                          </nodename>
+                          <nodenote></nodenote>
+                          <nodes>
+                            <node id="37" posx="1295.3559756088434" posy="1017.5313768001902" width="206" height="36" side="right" fold="false" sequence="false" treesize="36.39300537109375" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                              <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
+                              <nodename maxwidth="200">
+                                <text data="Store settings in EEPROM"/>
+                              </nodename>
+                              <nodenote></nodenote>
+                              <nodes>
+                                <node id="38" posx="1515.8891787338434" posy="1017.1383714290964" width="222" height="36" side="right" fold="false" sequence="false" treesize="36" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                                  <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
+                                  <nodename maxwidth="204.09716796875">
+                                    <text data="Back to Configuration menu"/>
+                                  </nodename>
+                                  <nodenote></nodenote>
+                                </node>
+                              </nodes>
+                            </node>
+                          </nodes>
+                        </node>
+                      </nodes>
+                    </node>
+                    <node id="11" posx="1043.0979189682182" posy="1062.6252488705027" width="28" height="36" side="right" fold="false" sequence="false" treesize="36.500671386720455" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
                       <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
                       <nodename maxwidth="200">
                         <text data="X"/>
                       </nodename>
                       <nodenote></nodenote>
                       <nodes>
-                        <node id="12" posx="1081.9919619369682" posy="893.31189437831495" width="46" height="36" side="right" fold="false" sequence="false" treesize="36.28466796875" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                        <node id="12" posx="1084.8945498275932" posy="1062.1245774837839" width="46" height="36" side="right" fold="false" sequence="false" treesize="36.28466796875" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
                           <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
                           <nodename maxwidth="200">
                             <text data="Exit"/>
                           </nodename>
                           <nodenote></nodenote>
                           <nodes>
-                            <node id="17" posx="1145.6762881088432" posy="893.59656234706495" width="163" height="36" side="right" fold="false" sequence="false" treesize="36" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
+                            <node id="17" posx="1148.5788759994682" posy="1062.4092454525339" width="163" height="36" side="right" fold="false" sequence="false" treesize="36" color="#f9c440" colorroot="false" summarized="false" layout="Manual" group="false">
                               <style branchmargin="100" branchradius="25" linktype="curved" linkwidth="2" linkarrow="false" linkdash="solid" nodeborder="underlined" nodewidth="200" nodeborderwidth="2" nodefill="false" nodemargin="4" nodepadding="5" nodefont="Sans 11" nodemarkup="true"/>
                               <nodename maxwidth="200">
                                 <text data="Proceed at softboot"/>

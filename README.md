@@ -13,7 +13,7 @@ This menu can be reached by pressing a button.
 It looks like this:
 
 
-![main menu](./main-menu.png)
+![main menu](./gfx/main-menu.png)
 
 
 ## Scale
@@ -23,7 +23,7 @@ This default scale for the measurements can be altered to in total 8 NMRA scales
 The scale selection menu looks as follows:
 
 
-![scale selection menu](./scale_select_menu.png)
+![scale selection menu](./gfx/scale_select_menu.png)
 
 
 ## Sensors
@@ -34,14 +34,18 @@ That looks like this:
 
 
 
-![sensor distance entry](./sensor_distance_entry.png)
+![sensor distance entry](./gfx/sensor_distance_entry.png)
 
 
 
 ## Operation
 The following functions are available.
+See also this state diagram:
 
-### Start Measurement
+![scale selection menu](./gfx/StateDiagram.png)
+
+
+### Measurement
 A measurement starts when one of the IR sensors is activated by a passing train.
 The appropriate (left or right) LED will be switched on to indicate the start of the measurement.
 The device now waits for the other sensor. 

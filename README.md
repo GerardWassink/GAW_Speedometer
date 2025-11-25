@@ -60,7 +60,7 @@ That looks like this:
 ## Operation
 See this state diagram for the functionality:
 
-![scale selection menu](./gfx/StateDiagram.png)
+![scale selection menu](./gfx/StateDiagram_2.1.png)
 
 
 ### Reset

@@ -3,14 +3,23 @@ This project is built to be able to measure model train speeds.
 The core is an Arduino nano. The output is going to an LCD 16x02 display. 
 Two infrared sensors are used to pick up trains rolling by and measuring 
 the milliseconds it takes from one to the other sensor. 
-It works bi-directional.
-A measurement stays available for 5 seconds.
+It works automaticly and bi-directional.
+The result of a measurement stays available for 5 seconds.
 After that the system reverts to automatic bi-directional measurement mode.
+
+
+### Measurement
+A measurement starts when one of the IR sensors is activated by a passing train.
+The appropriate (left or right) LED will be switched on to indicate the start of the measurement.
+The device now waits for the other sensor. 
+It then measures the time it took for the train to reach the other sensor. 
+As soon as the scond sensor is activated the scale-speed is calculated and displayed.
+
 
 ## Settings
 A settings menu has been built in using the serial interface.
-This menu can be reached by pressing a button.
-It looks like this:
+This menu can be reached by pressing the config button.
+The main config menu looks like this:
 
 
 ![main menu](./gfx/main-menu-2.1.png)
@@ -19,7 +28,7 @@ It looks like this:
 ## Scale
 In model railroading the scale of course is important for the speed calculation. 
 The default scale in this program is N-scale which is 1:160. 
-This default scale for the measurements can be altered to in total 8 NMRA scales.
+This scale for the measurements can be altered to in total 8 NMRA scales (choice 1).
 The scale selection menu looks as follows:
 
 
@@ -39,7 +48,7 @@ That looks like this:
 
 
 ## Sensors treshold
-The treshold for the left and right sensors can be configured using the config menu.
+The treshold for the left (3) and right (4) sensors can be configured using the config menu.
 Default value for both is 200.
 That looks like this:
 
@@ -49,22 +58,17 @@ That looks like this:
 
 
 ## Operation
-The following functions are available.
-See also this state diagram:
+See this state diagram for the functionality:
 
 ![scale selection menu](./gfx/StateDiagram.png)
-
-
-### Measurement
-A measurement starts when one of the IR sensors is activated by a passing train.
-The appropriate (left or right) LED will be switched on to indicate the start of the measurement.
-The device now waits for the other sensor. 
-It then measures the time it took for the train to reach the other sensor. 
-As soon as the scond sensor is activated the scale-speed is calculated and displayed.
 
 
 ### Reset
 The Reset button performs a hard reset of the Arduino,  creating a situation resembling a power off / power on.
 
+
 ## Schematic
-A [schematic](./schematic/GAW_Speedometer_schematic_v1.1.png) is available to make your own.
+A schematic is available to make your own: 
+
+![schematic](./schematic/GAW_Speedometer_schematic_v1.1.png)
+

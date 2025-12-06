@@ -23,10 +23,11 @@
  *            - scale selection
  *            - entering sensor distance in mm
  *   2.0  : Final touch up for release 2.0
- *   2.1  : Built in the possibillity to change the sensor treshold values
+ *   2.1  : Added the possibillity to change the sensor treshold values
+ *   2.1  : Built in F() function for literals, minor improvements
  *
  *------------------------------------------------------------------------- */
-#define progVersion "2.1"                   // Program version definition 
+#define progVersion "2.2"                   // Program version definition 
 /* ------------------------------------------------------------------------- *
  *             GNU LICENSE CONDITIONS
  * ------------------------------------------------------------------------- *
@@ -54,7 +55,7 @@
  * Compiler directives to switch debugging on / off
  * Do not enable DEBUG when not needed, Serial coms takes space and time!
  * ------------------------------------------------------------------------- */
-#define DEBUG 1
+#define DEBUG 0
 
 #if DEBUG == 1
   #define debugstart(x) Serial.begin(x)
@@ -172,8 +173,7 @@ void setup() {
   Wire.begin();                             // Start I2C
 
                                             // Initialize display backlight 
-                                            //   on by default
-  display1.init();
+  display1.init();                          //   on by default
   display1.backlight();
 
   pinMode(leftDetection, OUTPUT);
@@ -182,13 +182,13 @@ void setup() {
   pinMode(startConfig, INPUT_PULLUP);
 
   Serial.println();
-  Serial.print("---===### ");
+  Serial.print(F("---===### "));
   Serial.print(F("GAW_Speedometer v"));
   Serial.print(progVersion);
-  Serial.println(" ###===---");
+  Serial.println(F(" ###===---"));
   Serial.println();
 
-//  storeSettings();                          // uncomment to store settings initially 
+//  storeSettings();                          // uncomment to store initial settings
   getSettings();                            // Get settings from EEPROM
 
   LCD_display(display1, 0, 0, F("GAW_Speedometer "));
@@ -220,7 +220,7 @@ void softBoot() {
   realDistance = sensorDistance * scaleFactor / 1000.0;
 
   Serial.println();
-  Serial.println("---===### Ready for operation  ###===---");
+  Serial.println(F("---===### Ready for operation  ###===---"));
   Serial.println();
 
   state = waiting;
@@ -286,7 +286,7 @@ void loop() {
  * ------------------------------------------------------------------------- */
 void leftToRight() {
 
-debug("DetectedLeft, waitForRight - ");
+debug(F("DetectedLeft, waitForRight - "));
 
   digitalWrite(leftDetection, HIGH);        // indicate left detected
   leftMillis = millis();
@@ -308,7 +308,7 @@ debug("DetectedLeft, waitForRight - ");
  * ------------------------------------------------------------------------- */
 void rightToLeft() {
 
-debug("DetectedRight, waitForLeft - ");
+debug(F("DetectedRight, waitForLeft - "));
 
   digitalWrite(rightDetection, HIGH);       // indicate right detected
   rightMillis = millis();
@@ -330,13 +330,13 @@ debug("DetectedRight, waitForLeft - ");
  * ------------------------------------------------------------------------- */
 void showSpeed() {
 
-debug("Time: ");
+debug(F("Time: "));
 debug(String(detectionTime));
 
                                             // Calculate speed
   realSpeed = (realDistance * 3.6) / (detectionTime / 1000.0);
 
-debug(" - Speed: ");
+debug(F(" - Speed: "));
 debugln(String(realSpeed));
 
                                             // Show speed
@@ -359,16 +359,16 @@ void configMenu(){
 
   do {
     Serial.println();
-    Serial.println("|****************************|");
-    Serial.println("|**   Configuration menu   **|");
-    Serial.println("|****************************|");
-    Serial.println("");
-    Serial.println("Select one of the following options:");
-    Serial.println("1 Select scale");
-    Serial.println("2 Set sensor distance");
-    Serial.println("3 Set treshold for left sensor");
-    Serial.println("4 Set treshold for right sensor");
-    Serial.println("X Exit configuration menu");
+    Serial.println(F("|****************************|"));
+    Serial.println(F("|**   Configuration menu   **|"));
+    Serial.println(F("|****************************|"));
+    Serial.println();
+    Serial.println(F("Select one of the following options:"));
+    Serial.println(F("1 Select scale"));
+    Serial.println(F("2 Set sensor distance"));
+    Serial.println(F("3 Set treshold for left sensor"));
+    Serial.println(F("4 Set treshold for right sensor"));
+    Serial.println(F("X Exit configuration menu"));
     Serial.println();
 
     do {
@@ -416,7 +416,7 @@ void configMenu(){
           break;
 
         case 'X':
-          Serial.println("Leaving configuration menu");
+debugln(F("Leaving configuration menu"));
           stop = 1;
           continue;
 
@@ -439,15 +439,15 @@ int getLeftTreshold() {
   bool valid = false;
 
   Serial.println();
-  Serial.println("|****************************|");
-  Serial.println("|**   Set treshold for     **|");
-  Serial.println("|**   left sensor          **|");
-  Serial.println("|****************************|");
-  Serial.println("");
-  Serial.print("Current treshold for left sensor = ");
+  Serial.println(F("|****************************|"));
+  Serial.println(F("|**   Set treshold for     **|"));
+  Serial.println(F("|**   left sensor          **|"));
+  Serial.println(F("|****************************|"));
+  Serial.println(F(""));
+  Serial.print(F("Current treshold for left sensor = "));
   Serial.println(tresholdLeft);
-  Serial.println("");
-  Serial.print("Specify desired treshold: ");
+  Serial.println();
+  Serial.print(F("Specify desired treshold: "));
 
   do {
     if (Serial.available()) {
@@ -472,22 +472,22 @@ int getRightTreshold() {
   bool valid = false;
 
   Serial.println();
-  Serial.println("|****************************|");
-  Serial.println("|**   Set treshold for     **|");
-  Serial.println("|**   right sensor         **|");
-  Serial.println("|****************************|");
-  Serial.println("");
-  Serial.print("Current treshold for right sensor = ");
+  Serial.println(F("|****************************|"));
+  Serial.println(F("|**   Set treshold for     **|"));
+  Serial.println(F("|**   right sensor         **|"));
+  Serial.println(F("|****************************|"));
+  Serial.println();
+  Serial.print(F("Current treshold for right sensor = "));
   Serial.println(tresholdRight);
   Serial.println("");
-  Serial.print("Specify desired treshold: ");
+  Serial.print(F("Specify desired treshold: "));
 
   do {
     if (Serial.available()) {
       treshold = Serial.parseInt();
       if (treshold != 0) {
         valid = true;
-        Serial.print("You entered: ");
+        Serial.print(F("You entered: "));
         Serial.println(treshold);
       }
     }
@@ -505,22 +505,22 @@ float getSensorDistance() {
   bool valid = false;
 
   Serial.println();
-  Serial.println("|****************************|");
-  Serial.println("|**   Set sensor distance  **|");
-  Serial.println("|**   in millimeters       **|");
-  Serial.println("|****************************|");
-  Serial.println("");
-  Serial.print("Current sensor distance = ");
+  Serial.println(F("|****************************|"));
+  Serial.println(F("|**   Set sensor distance  **|"));
+  Serial.println(F("|**   in millimeters       **|"));
+  Serial.println(F("|****************************|"));
+  Serial.println();
+  Serial.print(F("Current sensor distance = "));
   Serial.println(sensorDistance);
   Serial.println("");
-  Serial.print("Specify desired sensor distance: ");
+  Serial.print(F("Specify desired sensor distance: "));
 
   do {
     if (Serial.available()) {
       dist_float = Serial.parseFloat();
       if (dist_float != 0) {
         valid = true;
-        Serial.print("You entered: ");
+        Serial.print(F("You entered: "));
         Serial.println(dist_float);
       }
     }
@@ -539,19 +539,19 @@ void chooseScale() {
 
   do {
     Serial.println();
-    Serial.println("|****************************|");
-    Serial.println("|**   Scale selection      **|");
-    Serial.println("|****************************|");
-    Serial.println("");
-    Serial.println("Select a scale by choosing the number:");
-    Serial.println("");
+    Serial.println(F("|****************************|"));
+    Serial.println(F("|**   Scale selection      **|"));
+    Serial.println(F("|****************************|"));
+    Serial.println();
+    Serial.println(F("Select a scale by choosing the number:"));
+    Serial.println();
 
     for (int i=0; i<=7; i++) {
       Serial.print(i);
       Serial.print(" - ");
       Serial.println( scaleName[i] );
     }
-    Serial.println("X - Leave");
+    Serial.println(F("X - Leave"));
 
     for (;;) {
       choice = toupper(Serial.read());
@@ -568,9 +568,9 @@ void chooseScale() {
         case '7':
           scalePtr = choice-48;             // convert char to int
 
-          Serial.print("   Selected scale: ");
+          Serial.print(F("   Selected scale: "));
           Serial.print(scalePtr);
-          Serial.print(" - ");
+          Serial.print(F(" - "));
           Serial.println( scaleName[scalePtr] );
 
           scaleFactor = scales[scalePtr];   // re-calculate realDistance
@@ -578,12 +578,12 @@ void chooseScale() {
 
           LCD_display(display1, 1, 0, F("Scale:          ") );
           LCD_display(display1, 1, 7, scaleName[scalePtr]);
-          Serial.println( F("Leaving scale selection") );
+debugln( F("Leaving scale selection") );
           return;
 
         case 'x':
         case 'X':
-          Serial.println( F("Leaving scale selection") );
+debugln( F("Leaving scale selection") );
           return;
 
         default:
@@ -599,7 +599,8 @@ void chooseScale() {
  * ------------------------------------------------------------------------- */
 void storeSettings() {
 
-debugln(F("Store settings to EEPROM"));
+  Serial.println();
+  Serial.println(F("Store settings to EEPROM"));
                                             // Put settings in 
                                             //  mySettings structure
   mySettings.senseDistance = sensorDistance;
@@ -611,17 +612,17 @@ debugln(F("Store settings to EEPROM"));
                                             //  to EEPROM
   EEPROM.put(0, mySettings);
 
-debugln();
-debug("Stored: selected scale (");
+debug(F("Stored: selected scale ("));
 debug(scaleName[scalePtr]);
-debug(") - and sensor distance (");
+debug(F(") - and sensor distance ("));
 debug(mySettings.senseDistance);
-debugln(")");
+debugln(F(")"));
 
-debugln();
-debug("Stored: treshold left (" + String(tresholdLeft));
-debug(") and treshold right (" + String(tresholdRight));
-debugln(")");
+debug(F("Stored: treshold left ("));
+debug(String(tresholdLeft));
+debug(F(") and treshold right ("));
+debug(String(tresholdRight));
+debugln(F(")"));
 debugln();
 
 }
@@ -633,7 +634,7 @@ debugln();
  * ------------------------------------------------------------------------- */
 void getSettings() {
 
-  debugln(F("Retrieving settings from EEPROM"));
+  Serial.println(F("Retrieving settings from EEPROM"));
   
                                             // Get mySettings structure 
                                             //  from EEPROM
@@ -646,11 +647,18 @@ void getSettings() {
   tresholdLeft   = mySettings.leftTreshold;
   tresholdRight   = mySettings.rightTreshold;
 
-  Serial.println("Retrieved Sensor distance in mm: " + String(sensorDistance) );
-  Serial.println("Retrieved Scale: " + String(scalePtr) + " being: " + scaleName[scalePtr]);
-  Serial.println("Retrieved treshold for left sensor: " + String(tresholdLeft) );
-  Serial.println("Retrieved treshold for right sensor: " + String(tresholdRight) );
-  Serial.println();
+debug(F("Retrieved Sensor distance in mm: "));
+debugln( String(sensorDistance) );
+debug(F("Retrieved Scale: "));
+debug( String(scalePtr));
+debug(F(" being: "));
+debugln(scaleName[scalePtr]);
+
+debug(F("Retrieved treshold for left sensor: "));
+debugln( String(tresholdLeft) );
+debug(F("Retrieved treshold for right sensor: "));
+debugln( String(tresholdRight) );
+
 }
 
 

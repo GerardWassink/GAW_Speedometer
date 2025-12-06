@@ -24,7 +24,7 @@
  *            - entering sensor distance in mm
  *   2.0  : Final touch up for release 2.0
  *   2.1  : Added the possibillity to change the sensor treshold values
- *   2.1  : Built in F() function for literals, minor improvements
+ *   2.2  : Built in F() function for literals, minor improvements
  *
  *------------------------------------------------------------------------- */
 #define progVersion "2.2"                   // Program version definition 

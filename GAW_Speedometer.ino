@@ -27,9 +27,10 @@
  *   2.2  : Built in F() function for literals, minor improvements
  *   2.3  : Added GNU Public License V2 text and License file GPLv2.md
  *   2.4  : Reorganized code into functional .h files
+ *   3.0  : Release version
  *
  *------------------------------------------------------------------------- */
-#define progVersion "2.4"                   // Program version definition 
+#define progVersion "3.0"                   // Program version definition 
 /* ------------------------------------------------------------------------- *
  *             GNU LICENSE CONDITIONS
  * ------------------------------------------------------------------------- *

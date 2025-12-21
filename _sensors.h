@@ -31,6 +31,7 @@
 
   debug(F("DetectedLeft, waitForRight - "));
 
+    LCD_display(display1, 0, 0, F("Speed: busy     "));
     digitalWrite(leftDetection, HIGH);      // indicate left detected
     leftMillis = millis();
 
@@ -51,6 +52,7 @@
 
   debug(F("DetectedRight, waitForLeft - "));
 
+    LCD_display(display1, 0, 0, F("Speed: busy     "));
     digitalWrite(rightDetection, HIGH);     // indicate right detected
     rightMillis = millis();
 

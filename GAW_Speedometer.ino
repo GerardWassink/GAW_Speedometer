@@ -78,7 +78,7 @@ int state               = booting;          // Initial state
  *       Initialization routine                                      setup()
  * ------------------------------------------------------------------------- */
 void setup() {
-  Serial.begin(115000);
+  Serial.begin(57600);
 
   Display_init();                           // Initialize I2C_display
   Settings_init();                          // Initialize Settings (config menus)
@@ -94,6 +94,11 @@ void setup() {
 
   delay(1500);                              // show for 1,5 second
 
+                        // Initial text on display
+  LCD_display(display1, 0, 0, F("Speed: wait     "));
+  LCD_display(display1, 1, 0, F("Scale:          ") );
+  LCD_display(display1, 1, 7, scaleName[scalePtr]);
+
   state = booting;                          // do softboot first
 
 }
@@ -104,11 +109,6 @@ void setup() {
  *       Software initialization routine                          softBoot()
  * ------------------------------------------------------------------------- */
 void softBoot() {
-
-                        // Initial text on display
-  LCD_display(display1, 0, 0, F("Speed:          "));
-  LCD_display(display1, 1, 0, F("Scale:           ") );
-  LCD_display(display1, 1, 7, scaleName[scalePtr]);
 
   Detection_init();                         // (Re)initialize detection
 
@@ -171,6 +171,3 @@ void loop() {
   }
 
 }
-
-
-
